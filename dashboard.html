@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Work Schedule Dashboard</title>
+
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+
+<body>
+
+    <!-- ================================
+         SIDEBAR
+    ================================= -->
+
+    <aside class="sidebar">
+
+        <h2>AI Roster</h2>
+
+<nav>
+    <a href="dashboard.html" class="active">Dashboard</a>
+    <a href="my-schedule.html">My Schedule</a>
+    <a href="profile.html">Profile</a>
+</nav>
+
+        <button class="logout-btn">Logout</button>
+
+    </aside>
+
+
+    <!-- ================================
+         MAIN CONTENT
+    ================================= -->
+
+    <main class="main-content">
+
+        <!-- Header -->
+
+        <header class="top-bar">
+
+            <div>
+
+                <h1>Dashboard</h1>
+
+                <p>
+                    Welcome back,
+                    <span id="userName">User</span> 👋
+                </p>
+
+            </div>
+
+            <div class="user-role">
+                Associate
+            </div>
+
+        </header>
+
+
+        <!-- ================================
+             SUMMARY CARDS
+        ================================= -->
+
+        <section class="summary-cards">
+
+    <div class="card">
+        <h3>Today's Shift</h3>
+        <p class="shift-day" id="todayShift">
+            Day Shift
+        </p>
+    </div>
+
+    <div class="card">
+        <h3>Working Days</h3>
+        <p id="workingDays">
+            5 Days
+        </p>
+    </div>
+
+    <div class="card">
+        <h3>Week Off</h3>
+        <p id="weekOff">
+            2 Days
+        </p>
+    </div>
+
+    <div class="card">
+        <h3>Current Rotation</h3>
+        <p id="currentRotation">
+            Day Shift
+        </p>
+    </div>
+
+</section>
+
+
+        <!-- ================================
+             MONTHLY SCHEDULE
+        ================================= -->
+
+        <section class="schedule-section">
+
+    <div class="schedule-header">
+
+        <div class="month-navigation">
+
+            <button id="prevMonth" type="button">‹</button>
+
+            <h2 id="currentMonth">August 2026</h2>
+
+            <button id="nextMonth" type="button">›</button>
+
+        </div>
+
+        <div class="legend">
+
+            <span>🔵 Day</span>
+            <span>🟢 Night</span>
+            <span>🔴 Week Off</span>
+
+        </div>
+
+    </div>
+
+    <!-- calendar code இங்கே -->
+
+</section>
+
+            <!-- Calendar -->
+
+            <div class="calendar" id="calendar">
+
+                <div class="day-name">Sun</div>
+                <div class="day-name">Mon</div>
+                <div class="day-name">Tue</div>
+                <div class="day-name">Wed</div>
+                <div class="day-name">Thu</div>
+                <div class="day-name">Fri</div>
+                <div class="day-name">Sat</div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- ================================
+         SINGLE JAVASCRIPT FILE
+    ================================= -->
+
+    <script src="script.js"></script>
+
+</body>
+
+</html>

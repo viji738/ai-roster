@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Schedule - AI Roster</title>
+
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+
+<body>
+
+    <!-- ================================
+         SIDEBAR
+    ================================= -->
+
+    <aside class="sidebar">
+
+        <h2>AI Roster</h2>
+
+        <nav>
+            <a href="dashboard.html">Dashboard</a>
+            <a href="my-schedule.html" class="active">My Schedule</a>
+            <a href="profile.html">Profile</a>
+        </nav>
+
+        <button class="logout-btn" onclick="logout()">Logout</button>
+
+    </aside>
+
+
+    <!-- ================================
+         MAIN CONTENT
+    ================================= -->
+
+    <main class="main-content">
+
+        <!-- Header -->
+
+        <header class="top-bar">
+
+            <div>
+
+                <h1>My Schedule</h1>
+
+                <p>
+                    Here is your monthly work schedule,
+                    <span id="userName">User</span> 👋
+                </p>
+
+            </div>
+
+            <div class="user-role" id="userRole">
+                Associate
+            </div>
+
+        </header>
+
+
+        <!-- ================================
+             SCHEDULE SUMMARY
+        ================================= -->
+
+        <section class="summary-cards">
+
+            <div class="card">
+
+                <h3>Today's Shift</h3>
+
+                <p class="shift-day" id="todayShift">
+                    Day Shift
+                </p>
+
+            </div>
+
+
+            <div class="card">
+
+                <h3>Working Days</h3>
+
+                <p id="workingDays">
+                    5 Days
+                </p>
+
+            </div>
+
+
+            <div class="card">
+
+                <h3>Week Off</h3>
+
+                <p id="weekOff">
+                    2 Days
+                </p>
+
+            </div>
+
+
+            <div class="card">
+
+                <h3>Current Rotation</h3>
+
+                <p id="currentRotation">
+                    Day Shift
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================================
+             MY MONTHLY SCHEDULE
+        ================================= -->
+
+        <section class="schedule-section">
+
+            <div class="schedule-header">
+
+                <div>
+
+                    <div class="month-navigation">
+
+                        <button
+                            id="prevMonth"
+                            type="button">
+                            ‹
+                        </button>
+
+                        <h2 id="currentMonth">
+                            August 2026
+                        </h2>
+
+                        <button
+                            id="nextMonth"
+                            type="button">
+                            ›
+                        </button>
+
+                    </div>
+
+
+                    <p>
+                        5 Days Day Shift → 2 Days Off →
+                        5 Days Night Shift → 2 Days Off
+                    </p>
+
+                </div>
+
+
+                <!-- Legend -->
+
+                <div class="legend">
+
+                    <span>
+                        🔵 Day
+                    </span>
+
+                    <span>
+                        🟢 Night
+                    </span>
+
+                    <span>
+                        🔴 Week Off
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================
+                 CALENDAR
+            ================================= -->
+
+            <div
+                class="calendar"
+                id="calendar">
+
+                <div class="day-name">Sun</div>
+                <div class="day-name">Mon</div>
+                <div class="day-name">Tue</div>
+                <div class="day-name">Wed</div>
+                <div class="day-name">Thu</div>
+                <div class="day-name">Fri</div>
+                <div class="day-name">Sat</div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================================
+             NEXT SHIFT
+        ================================= -->
+
+        <section class="schedule-section">
+
+            <div class="schedule-header">
+
+                <h2>Next Shift</h2>
+
+            </div>
+
+
+            <div class="summary-cards">
+
+                <div class="card">
+
+                    <h3>
+                        🌙 Next Working Shift
+                    </h3>
+
+                    <p id="nextShift">
+                        Night Shift
+                    </p>
+
+                </div>
+
+
+                <div class="card">
+
+                    <h3>
+                        📅 Date
+                    </h3>
+
+                    <p id="nextShiftDate">
+                        August 19, 2026
+                    </p>
+
+                </div>
+
+
+                <div class="card">
+
+                    <h3>
+                        ⏰ Shift Timing
+                    </h3>
+
+                    <p id="nextShiftTime">
+                        9:00 PM - 6:00 AM
+                    </p>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- ================================
+             SHIFT INFORMATION
+        ================================= -->
+
+        <section class="schedule-section">
+
+            <div class="schedule-header">
+
+                <h2>Shift Information</h2>
+
+            </div>
+
+
+            <div class="shift-details">
+
+
+                <!-- DAY SHIFT -->
+
+                <div class="shift-card day-card">
+
+                    <div class="shift-icon">
+                        ☀️
+                    </div>
+
+                    <div class="shift-info">
+
+                        <h3>
+                            Day Shift
+                        </h3>
+
+                        <p>
+                            9:00 AM - 6:00 PM
+                        </p>
+
+                        <span>
+                            Working Shift
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- NIGHT SHIFT -->
+
+                <div class="shift-card night-card">
+
+                    <div class="shift-icon">
+                        🌙
+                    </div>
+
+                    <div class="shift-info">
+
+                        <h3>
+                            Night Shift
+                        </h3>
+
+                        <p>
+                            9:00 PM - 6:00 AM
+                        </p>
+
+                        <span>
+                            Working Shift
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <!-- WEEK OFF -->
+
+                <div class="shift-card off-card">
+
+                    <div class="shift-icon">
+                        🔴
+                    </div>
+
+                    <div class="shift-info">
+
+                        <h3>
+                            Week Off
+                        </h3>
+
+                        <p>
+                            No Working Hours
+                        </p>
+
+                        <span>
+                            Rest Day
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- ================================
+         JAVASCRIPT
+    ================================= -->
+
+    <script src="script.js"></script>
+
+
+    <!-- ================================
+         LOGOUT
+    ================================= -->
+
+    <script>
+
+        function logout() {
+
+            localStorage.removeItem("userName");
+            localStorage.removeItem("userRole");
+
+            window.location.href = "login.html";
+
+        }
+
+    </script>
+
+</body>
+
+</html>

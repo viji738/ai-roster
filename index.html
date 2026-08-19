@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Automatic Roster System</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="login-container">
+
+        <div class="login-box">
+
+            <h1>AI Automatic Roster</h1>
+            <p class="subtitle">Work Schedule Management System</p>
+
+            <form id="loginForm">
+
+                <label for="name">Name</label>
+                <input 
+                    type="text" 
+                    id="name" 
+                    placeholder="Enter your name"
+                >
+
+                <label for="loginId">Login ID</label>
+                <input 
+                    type="text" 
+                    id="loginId" 
+                    placeholder="Enter your login ID"
+                >
+
+                <label for="password">Password</label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    placeholder="Enter your password"
+                >
+
+                <label for="role">Role</label>
+                <select id="role">
+                    <option value="">Select your role</option>
+                    <option value="TL">TL</option>
+                    <option value="PA">PA</option>
+                    <option value="Manager">Manager</option>
+                    <option value="Associate">Associate</option>
+                </select>
+
+                <button type="submit">Login</button>
+
+                <p id="message"></p>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <script src="script.js"></script>
+
+</body>
+</html>

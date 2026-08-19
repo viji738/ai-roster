@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Profile - AI Roster</title>
+
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+
+<body>
+
+    <!-- ================================
+         SIDEBAR
+    ================================= -->
+
+    <aside class="sidebar">
+
+        <h2>AI Roster</h2>
+
+        <nav>
+
+            <a href="dashboard.html">
+                Dashboard
+            </a>
+
+            <a href="my-schedule.html">
+                My Schedule
+            </a>
+
+            <a href="profile.html" class="active">
+                Profile
+            </a>
+
+        </nav>
+
+        <button class="logout-btn" onclick="logoutUser()">
+    Logout
+</button>
+
+    </aside>
+
+
+    <!-- ================================
+         MAIN CONTENT
+    ================================= -->
+
+    <main class="main-content">
+
+        <!-- Header -->
+
+        <header class="top-bar">
+
+            <div>
+
+                <h1>My Profile</h1>
+
+                <p>
+                    Manage your profile information
+                </p>
+
+            </div>
+
+            <div
+                class="user-role"
+                id="userRole">
+                Associate
+            </div>
+
+        </header>
+
+
+        <!-- ================================
+             PROFILE SECTION
+        ================================= -->
+
+        <section class="profile-section">
+
+            <!-- Profile Header -->
+
+            <div class="profile-header">
+
+                <div class="profile-avatar">
+                    <span id="profileInitial">
+                        U
+                    </span>
+                </div>
+
+                <div>
+
+                    <h2 id="profileName">
+                        User
+                    </h2>
+
+                    <p id="profileRole">
+                        Associate
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================
+                 PERSONAL INFORMATION
+            ================================= -->
+
+            <div class="profile-card">
+
+                <h2>Personal Information</h2>
+
+                <div class="profile-grid">
+
+                    <div class="profile-field">
+
+                        <label>
+                            Full Name
+                        </label>
+
+                        <p id="profileFullName">
+                            User
+                        </p>
+
+                    </div>
+
+
+                    <div class="profile-field">
+
+                        <label>
+                            Login ID
+                        </label>
+
+                        <p id="profileLoginId">
+                            Not Available
+                        </p>
+
+                    </div>
+
+
+                    <div class="profile-field">
+
+                        <label>
+                            Role
+                        </label>
+
+                        <p id="profileRoleInfo">
+                            Associate
+                        </p>
+
+                    </div>
+
+
+                    <div class="profile-field">
+
+                        <label>
+                            Account Status
+                        </label>
+
+                        <p class="status-active">
+                            Active
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================
+                 WORK INFORMATION
+            ================================= -->
+
+            <div class="profile-card">
+
+                <h2>Work Information</h2>
+
+                <div class="profile-grid">
+
+                    <div class="profile-field">
+
+                        <label>
+                            Shift Pattern
+                        </label>
+
+                        <p>
+                            5 Days Day → 2 Days Off
+                        </p>
+
+                    </div>
+
+
+                    <div class="profile-field">
+
+                        <label>
+                            Night Rotation
+                        </label>
+
+                        <p>
+                            5 Days Night → 2 Days Off
+                        </p>
+
+                    </div>
+
+
+                    <div class="profile-field">
+
+                        <label>
+                            Day Shift Timing
+                        </label>
+
+                        <p>
+                            9:00 AM - 6:00 PM
+                        </p>
+
+                    </div>
+
+
+                    <div class="profile-field">
+
+                        <label>
+                            Night Shift Timing
+                        </label>
+
+                        <p>
+                            9:00 PM - 6:00 AM
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+   
+
+
+   
+
+<script>
+function logoutUser() {
+
+    localStorage.clear();
+
+    window.location.href = "./index.html";
+}
+</script>
+
+</body>
+
+</html>

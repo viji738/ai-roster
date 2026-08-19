@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Schedule Management - AI Roster</title>
+
+    <link rel="stylesheet" href="dashboard.css">
+
+    <style>
+
+        /* ================================
+           SCHEDULE FORM
+        ================================= */
+
+        .schedule-form {
+            display: grid;
+
+            grid-template-columns: repeat(2, 1fr);
+
+            gap: 20px;
+
+            margin-top: 20px;
+        }
+
+        .form-group {
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-size: 14px;
+
+            font-weight: 600;
+
+            color: #374151;
+        }
+
+        .form-group input,
+        .form-group select {
+
+            padding: 12px 14px;
+
+            border: 1px solid #d1d5db;
+
+            border-radius: 8px;
+
+            font-size: 14px;
+
+            outline: none;
+
+            background: white;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+
+            border-color: #2563eb;
+        }
+
+
+        /* ================================
+           SAVE BUTTON
+        ================================= */
+
+        .save-btn {
+
+            grid-column: 1 / -1;
+
+            padding: 13px;
+
+            border: none;
+
+            border-radius: 8px;
+
+            background: #2563eb;
+
+            color: white;
+
+            font-size: 15px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+        }
+
+        .save-btn:hover {
+
+            background: #1d4ed8;
+        }
+
+
+        /* ================================
+           MESSAGE
+        ================================= */
+
+        #scheduleMessage {
+
+            margin-top: 15px;
+
+            font-size: 14px;
+
+            font-weight: 600;
+        }
+
+
+        /* ================================
+           SCHEDULE TABLE
+        ================================= */
+
+        .schedule-table {
+
+            width: 100%;
+
+            border-collapse: collapse;
+
+            margin-top: 20px;
+        }
+
+        .schedule-table th {
+
+            padding: 14px;
+
+            background: #eef3f8;
+
+            text-align: left;
+
+            font-size: 14px;
+        }
+
+        .schedule-table td {
+
+            padding: 14px;
+
+            border-bottom: 1px solid #e5e7eb;
+
+            font-size: 14px;
+        }
+
+
+        /* ================================
+           SHIFT COLORS
+        ================================= */
+
+        .day-text {
+
+            color: #1d4ed8;
+
+            font-weight: bold;
+        }
+
+        .night-text {
+
+            color: #15803d;
+
+            font-weight: bold;
+        }
+
+        .off-text {
+
+            color: #dc2626;
+
+            font-weight: bold;
+        }
+
+
+        /* ================================
+           DELETE BUTTON
+        ================================= */
+
+        .delete-btn {
+
+            padding: 7px 12px;
+
+            border: none;
+
+            border-radius: 6px;
+
+            background: #fee2e2;
+
+            color: #dc2626;
+
+            font-weight: bold;
+
+            cursor: pointer;
+        }
+
+        .delete-btn:hover {
+
+            background: #fecaca;
+        }
+
+
+        /* ================================
+           MOBILE
+        ================================= */
+
+        @media (max-width: 700px) {
+
+            .schedule-form {
+
+                grid-template-columns: 1fr;
+
+            }
+
+            .save-btn {
+
+                grid-column: auto;
+
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- ================================
+         SIDEBAR
+    ================================= -->
+
+    <aside class="sidebar">
+
+        <h2>AI Roster</h2>
+
+        <nav>
+
+            <a href="manager-dashboard.html">
+                Dashboard
+            </a>
+
+            <a href="employees.html">
+                Employees
+            </a>
+
+            <a href="schedule2.html" class="active">
+                Schedule
+            </a>
+
+            <a href="manager-profile.html">
+                Profile
+            </a>
+
+        </nav>
+
+
+        <button
+            class="logout-btn"
+            onclick="logoutManager()">
+
+            Logout
+
+        </button>
+
+    </aside>
+
+
+    <!-- ================================
+         MAIN CONTENT
+    ================================= -->
+
+    <main class="main-content">
+
+
+        <!-- ================================
+             HEADER
+        ================================= -->
+
+        <header class="top-bar">
+
+            <div>
+
+                <h1>Schedule Management</h1>
+
+                <p>
+                    Manage employee work schedules
+                </p>
+
+            </div>
+
+
+            <div class="user-role">
+
+                Manager
+
+            </div>
+
+        </header>
+
+
+
+        <!-- ================================
+             ADD SCHEDULE
+        ================================= -->
+
+        <section class="schedule-section">
+
+            <div class="schedule-header">
+
+                <div>
+
+                    <h2>
+                        Add Employee Schedule
+                    </h2>
+
+                    <p>
+                        Assign a shift to an employee
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="schedule-form">
+
+
+                <!-- EMPLOYEE -->
+
+                <div class="form-group">
+
+                    <label>
+                        Employee
+                    </label>
+
+                    <select id="employee">
+
+                        <option value="">
+                            Select Employee
+                        </option>
+
+                        <option value="Arun Kumar">
+                            Arun Kumar
+                        </option>
+
+                        <option value="Priya">
+                            Priya
+                        </option>
+
+                        <option value="Karthik">
+                            Karthik
+                        </option>
+
+                        <option value="Divya">
+                            Divya
+                        </option>
+
+                        <option value="Sanjay">
+                            Sanjay
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+
+                <!-- DATE -->
+
+                <div class="form-group">
+
+                    <label>
+                        Date
+                    </label>
+
+                    <input
+                        type="date"
+                        id="scheduleDate">
+
+                </div>
+
+
+
+                <!-- SHIFT -->
+
+                <div class="form-group">
+
+                    <label>
+                        Shift
+                    </label>
+
+                    <select id="shift">
+
+                        <option value="">
+                            Select Shift
+                        </option>
+
+                        <option value="Day Shift">
+                            Day Shift
+                        </option>
+
+                        <option value="Night Shift">
+                            Night Shift
+                        </option>
+
+                        <option value="Week Off">
+                            Week Off
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+
+                <!-- TIMING -->
+
+                <div class="form-group">
+
+                    <label>
+                        Shift Timing
+                    </label>
+
+                    <select id="timing">
+
+                        <option value="">
+                            Select Timing
+                        </option>
+
+                        <option value="9:00 AM - 6:00 PM">
+                            9:00 AM - 6:00 PM
+                        </option>
+
+                        <option value="9:00 PM - 6:00 AM">
+                            9:00 PM - 6:00 AM
+                        </option>
+
+                        <option value="-">
+                            -
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+
+                <!-- SAVE -->
+
+                <button
+                    class="save-btn"
+                    onclick="saveSchedule()">
+
+                    Save Schedule
+
+                </button>
+
+            </div>
+
+
+            <p id="scheduleMessage"></p>
+
+        </section>
+
+
+
+        <!-- ================================
+             SAVED SCHEDULES
+        ================================= -->
+
+        <section
+            class="schedule-section"
+            style="margin-top:30px;">
+
+            <div class="schedule-header">
+
+                <div>
+
+                    <h2>
+                        Scheduled Employees
+                    </h2>
+
+                    <p>
+                        Saved employee schedules
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div style="overflow-x:auto;">
+
+                <table class="schedule-table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Employee
+                            </th>
+
+                            <th>
+                                Date
+                            </th>
+
+                            <th>
+                                Shift
+                            </th>
+
+                            <th>
+                                Timing
+                            </th>
+
+                            <th>
+                                Action
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="scheduleTableBody">
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+
+
+    <!-- ================================
+         JAVASCRIPT
+    ================================= -->
+
+    <script>
+
+        // ================================
+        // LOAD SCHEDULES
+        // ================================
+
+        let schedules =
+            JSON.parse(
+                localStorage.getItem("managerSchedules")
+            ) || [];
+
+
+        // ================================
+        // SAVE SCHEDULE
+        // ================================
+
+        function saveSchedule() {
+
+            const employee =
+                document.getElementById("employee").value;
+
+            const date =
+                document.getElementById("scheduleDate").value;
+
+            const shift =
+                document.getElementById("shift").value;
+
+            const timing =
+                document.getElementById("timing").value;
+
+            const message =
+                document.getElementById("scheduleMessage");
+
+
+            // Validation
+
+            if (
+                employee === "" ||
+                date === "" ||
+                shift === "" ||
+                timing === ""
+            ) {
+
+                message.textContent =
+                    "Please fill all the fields.";
+
+                message.style.color = "#dc2626";
+
+                return;
+            }
+
+
+            // Create schedule object
+
+            const newSchedule = {
+
+                employee: employee,
+
+                date: date,
+
+                shift: shift,
+
+                timing: timing
+
+            };
+
+
+            // Add schedule
+
+            schedules.push(newSchedule);
+
+
+            // Save to localStorage
+
+            localStorage.setItem(
+                "managerSchedules",
+                JSON.stringify(schedules)
+            );
+
+
+            message.textContent =
+                "Schedule saved successfully!";
+
+            message.style.color =
+                "#16a34a";
+
+
+            // Clear form
+
+            document.getElementById("employee").value = "";
+
+            document.getElementById("scheduleDate").value = "";
+
+            document.getElementById("shift").value = "";
+
+            document.getElementById("timing").value = "";
+
+
+            // Refresh table
+
+            displaySchedules();
+
+        }
+
+
+
+        // ================================
+        // DISPLAY SCHEDULES
+        // ================================
+
+        function displaySchedules() {
+
+            const tableBody =
+                document.getElementById(
+                    "scheduleTableBody"
+                );
+
+
+            tableBody.innerHTML = "";
+
+
+            schedules.forEach(
+                function(schedule, index) {
+
+                    const row =
+                        document.createElement("tr");
+
+
+                    let shiftClass = "";
+
+
+                    if (
+                        schedule.shift === "Day Shift"
+                    ) {
+
+                        shiftClass =
+                            "day-text";
+
+                    }
+                    else if (
+                        schedule.shift === "Night Shift"
+                    ) {
+
+                        shiftClass =
+                            "night-text";
+
+                    }
+                    else {
+
+                        shiftClass =
+                            "off-text";
+
+                    }
+
+
+                    row.innerHTML = `
+
+                        <td>
+                            ${schedule.employee}
+                        </td>
+
+                        <td>
+                            ${schedule.date}
+                        </td>
+
+                        <td class="${shiftClass}">
+                            ${schedule.shift}
+                        </td>
+
+                        <td>
+                            ${schedule.timing}
+                        </td>
+
+                        <td>
+
+                            <button
+                                class="delete-btn"
+                                onclick="deleteSchedule(${index})">
+
+                                Delete
+
+                            </button>
+
+                        </td>
+
+                    `;
+
+
+                    tableBody.appendChild(row);
+
+                }
+            );
+
+        }
+
+
+
+        // ================================
+        // DELETE SCHEDULE
+        // ================================
+
+        function deleteSchedule(index) {
+
+            schedules.splice(index, 1);
+
+
+            localStorage.setItem(
+                "managerSchedules",
+                JSON.stringify(schedules)
+            );
+
+
+            displaySchedules();
+
+        }
+
+
+
+        // ================================
+        // LOGOUT
+        // ================================
+
+        function logoutManager() {
+
+            localStorage.clear();
+
+            window.location.href =
+                "index.html";
+
+        }
+
+
+
+        // ================================
+        // INITIAL LOAD
+        // ================================
+
+        displaySchedules();
+
+    </script>
+
+
+</body>
+
+</html>

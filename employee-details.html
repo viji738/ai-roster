@@ -1,0 +1,486 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Employee Details - AI Roster</title>
+
+    <link rel="stylesheet" href="dashboard.css">
+
+</head>
+
+<body>
+
+    <!-- ================================
+         SIDEBAR
+    ================================= -->
+
+    <aside class="sidebar">
+
+        <h2>AI Roster</h2>
+
+        <nav>
+
+            <a href="manager-dashboard.html">
+                Dashboard
+            </a>
+
+            <a href="employees.html" class="active">
+                Employees
+            </a>
+
+            <a href="schedule2.html">
+                Schedule
+            </a>
+
+            <a href="manager-profile.html">
+                Profile
+            </a>
+
+        </nav>
+
+        <button
+            class="logout-btn"
+            onclick="logoutManager()">
+
+            Logout
+
+        </button>
+
+    </aside>
+
+
+    <!-- ================================
+         MAIN CONTENT
+    ================================= -->
+
+    <main class="main-content">
+
+
+        <!-- TOP BAR -->
+
+        <header class="top-bar">
+
+            <div>
+
+                <h1>Employee Details</h1>
+
+                <p>
+                    View employee information
+                </p>
+
+            </div>
+
+            <div class="user-role">
+                Manager
+            </div>
+
+        </header>
+
+
+        <!-- ================================
+             EMPLOYEE PROFILE
+        ================================= -->
+
+        <section class="profile-section">
+
+
+            <!-- PROFILE HEADER -->
+
+            <div class="profile-header">
+
+                <div class="profile-avatar">
+
+                    <span id="profileInitial">
+                        A
+                    </span>
+
+                </div>
+
+                <div>
+
+                    <h2 id="employeeName">
+                        Employee
+                    </h2>
+
+                    <p id="employeeRole">
+                        Associate
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================
+                 PERSONAL INFORMATION
+            ================================= -->
+
+            <div class="profile-card">
+
+                <h2>
+                    Personal Information
+                </h2>
+
+                <div class="profile-grid">
+
+
+                    <div class="profile-field">
+
+                        <label>
+                            Full Name
+                        </label>
+
+                        <p id="fullName">
+                            -
+                        </p>
+
+                    </div>
+
+
+                    <div class="profile-field">
+
+                        <label>
+                            Login ID
+                        </label>
+
+                        <p id="loginId">
+                            -
+                        </p>
+
+                    </div>
+
+
+                    <div class="profile-field">
+
+                        <label>
+                            Role
+                        </label>
+
+                        <p id="role">
+                            -
+                        </p>
+
+                    </div>
+
+
+                    <div class="profile-field">
+
+                        <label>
+                            Account Status
+                        </label>
+
+                        <p class="status-active">
+                            Active
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================
+                 WORK INFORMATION
+            ================================= -->
+
+            <div class="profile-card">
+
+                <h2>
+                    Work Information
+                </h2>
+
+                <div class="profile-grid">
+
+
+                    <div class="profile-field">
+
+                        <label>
+                            Current Shift
+                        </label>
+
+                        <p id="currentShift">
+                            -
+                        </p>
+
+                    </div>
+
+
+                    <div class="profile-field">
+
+                        <label>
+                            Shift Timing
+                        </label>
+
+                        <p id="shiftTiming">
+                            -
+                        </p>
+
+                    </div>
+
+
+                    <div class="profile-field">
+
+                        <label>
+                            Current Status
+                        </label>
+
+                        <p
+                            id="currentStatus"
+                            class="status-active">
+
+                            -
+
+                        </p>
+
+                    </div>
+
+
+                    <div class="profile-field">
+
+                        <label>
+                            Shift Pattern
+                        </label>
+
+                        <p id="shiftPattern">
+                            5 Days Day → 2 Days Off
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================================
+                 BACK BUTTON
+            ================================= -->
+
+            <div style="margin-top:20px;">
+
+                <a
+                    href="employees.html"
+                    style="
+                    display:inline-block;
+                    padding:12px 20px;
+                    background:#2563eb;
+                    color:white;
+                    text-decoration:none;
+                    border-radius:8px;
+                    font-weight:bold;
+                    ">
+
+                    ← Back to Employees
+
+                </a>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <!-- ================================
+         JAVASCRIPT
+    ================================= -->
+
+    <script>
+
+        // ================================
+        // EMPLOYEE DATA
+        // ================================
+
+        const employees = {
+
+            EMP001: {
+
+                name: "Arun Kumar",
+
+                role: "Associate",
+
+                shift: "Day Shift",
+
+                timing: "9:00 AM - 6:00 PM",
+
+                status: "Working",
+
+                pattern: "5 Days Day → 2 Days Off"
+
+            },
+
+
+            EMP002: {
+
+                name: "Priya",
+
+                role: "Associate",
+
+                shift: "Night Shift",
+
+                timing: "9:00 PM - 6:00 AM",
+
+                status: "Working",
+
+                pattern: "5 Days Night → 2 Days Off"
+
+            },
+
+
+            EMP003: {
+
+                name: "Karthik",
+
+                role: "Associate",
+
+                shift: "Week Off",
+
+                timing: "-",
+
+                status: "Off",
+
+                pattern: "5 Days Day → 2 Days Off"
+
+            },
+
+
+            EMP004: {
+
+                name: "Divya",
+
+                role: "Associate",
+
+                shift: "Day Shift",
+
+                timing: "9:00 AM - 6:00 PM",
+
+                status: "Working",
+
+                pattern: "5 Days Day → 2 Days Off"
+
+            },
+
+
+            EMP005: {
+
+                name: "Sanjay",
+
+                role: "Associate",
+
+                shift: "Night Shift",
+
+                timing: "9:00 PM - 6:00 AM",
+
+                status: "Working",
+
+                pattern: "5 Days Night → 2 Days Off"
+
+            }
+
+        };
+
+
+        // ================================
+        // GET EMPLOYEE ID FROM URL
+        // ================================
+
+        const urlParams =
+            new URLSearchParams(
+                window.location.search
+            );
+
+        const employeeId =
+            urlParams.get("id");
+
+
+        // ================================
+        // GET EMPLOYEE
+        // ================================
+
+        const employee =
+            employees[employeeId];
+
+
+        // ================================
+        // DISPLAY EMPLOYEE DETAILS
+        // ================================
+
+        if (employee) {
+
+            document.getElementById("employeeName")
+                .textContent = employee.name;
+
+            document.getElementById("employeeRole")
+                .textContent = employee.role;
+
+            document.getElementById("profileInitial")
+                .textContent =
+                employee.name.charAt(0).toUpperCase();
+
+            document.getElementById("fullName")
+                .textContent = employee.name;
+
+            document.getElementById("loginId")
+                .textContent = employeeId;
+
+            document.getElementById("role")
+                .textContent = employee.role;
+
+            document.getElementById("currentShift")
+                .textContent = employee.shift;
+
+            document.getElementById("shiftTiming")
+                .textContent = employee.timing;
+
+            document.getElementById("currentStatus")
+                .textContent = employee.status;
+
+            document.getElementById("shiftPattern")
+                .textContent = employee.pattern;
+
+
+            // Change status color for Week Off
+
+            if (employee.status === "Off") {
+
+                document.getElementById("currentStatus")
+                    .style.color = "#dc2626";
+
+            }
+
+        }
+        else {
+
+            document.getElementById("employeeName")
+                .textContent = "Employee Not Found";
+
+            document.getElementById("employeeRole")
+                .textContent = "";
+
+        }
+
+
+        // ================================
+        // LOGOUT
+        // ================================
+
+        function logoutManager() {
+
+            localStorage.clear();
+
+            window.location.href = "index.html";
+
+        }
+
+    </script>
+
+</body>
+
+</html>
+```

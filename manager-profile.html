@@ -1,0 +1,311 @@
+```html
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Manager Profile - AI Roster</title>
+
+    <link rel="stylesheet" href="dashboard.css">
+
+</head>
+
+<body>
+
+    <!-- ================================
+         SIDEBAR
+    ================================= -->
+
+    <aside class="sidebar">
+
+        <h2>AI Roster</h2>
+
+       <nav>
+
+    <a href="manager-dashboard.html">
+        Dashboard
+    </a>
+
+    <a href="employees.html">
+        Employees
+    </a>
+
+    <a href="schedule2.html">
+        Schedule
+    </a>
+
+    <a href="manager-profile.html" class="active">
+        Profile
+    </a>
+
+</nav>
+
+        <button
+            class="logout-btn"
+            onclick="logoutManager()">
+
+            Logout
+
+        </button>
+
+    </aside>
+
+
+    <!-- ================================
+         MAIN CONTENT
+    ================================= -->
+
+    <main class="main-content">
+
+
+        <!-- TOP BAR -->
+
+        <header class="top-bar">
+
+            <div>
+
+                <h1>Manager Profile</h1>
+
+                <p>
+                    View and manage your profile information
+                </p>
+
+            </div>
+
+            <div class="user-role">
+                Manager
+            </div>
+
+        </header>
+
+
+
+        <!-- ================================
+             PROFILE SECTION
+        ================================= -->
+
+        <section class="profile-section">
+
+
+            <!-- PROFILE HEADER -->
+
+            <div class="profile-header">
+
+                <div class="profile-avatar">
+
+                    <span>
+                        M
+                    </span>
+
+                </div>
+
+                <div>
+
+                    <h2>
+                        Manager
+                    </h2>
+
+                    <p>
+                        Manager
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ================================
+                 PERSONAL INFORMATION
+            ================================= -->
+
+            <div class="profile-card">
+
+                <h2>
+                    Personal Information
+                </h2>
+
+                <div class="profile-grid">
+
+
+                    <div class="profile-field">
+
+                        <label>
+                            Full Name
+                        </label>
+
+                        <p>
+                            Manager
+                        </p>
+
+                    </div>
+
+
+                    <div class="profile-field">
+
+                        <label>
+                            Login ID
+                        </label>
+
+                        <p>
+                            MANAGER001
+                        </p>
+
+                    </div>
+
+
+                    <div class="profile-field">
+
+                        <label>
+                            Role
+                        </label>
+
+                        <p>
+                            Manager
+                        </p>
+
+                    </div>
+
+
+                    <div class="profile-field">
+
+                        <label>
+                            Account Status
+                        </label>
+
+                        <p class="status-active">
+                            Active
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- ================================
+                 WORK INFORMATION
+            ================================= -->
+
+            <div class="profile-card">
+
+                <h2>
+                    Work Information
+                </h2>
+
+                <div class="profile-grid">
+
+
+                    <div class="profile-field">
+
+                        <label>
+                            Department
+                        </label>
+
+                        <p>
+                            Operations
+                        </p>
+
+                    </div>
+
+
+                    <div class="profile-field">
+
+                        <label>
+                            Position
+                        </label>
+
+                        <p>
+                            Team Manager
+                        </p>
+
+                    </div>
+
+
+                    <div class="profile-field">
+
+                        <label>
+                            Employees Managed
+                        </label>
+
+                        <p>
+                            25 Employees
+                        </p>
+
+                    </div>
+
+
+                    <div class="profile-field">
+
+                        <label>
+                            Account Type
+                        </label>
+
+                        <p>
+                            Manager Account
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- BACK BUTTON -->
+
+            <div style="margin-top:20px;">
+
+                <a
+                    href="manager-dashboard.html"
+                    style="
+                    display:inline-block;
+                    padding:12px 20px;
+                    background:#2563eb;
+                    color:white;
+                    text-decoration:none;
+                    border-radius:8px;
+                    font-weight:bold;
+                    ">
+
+                    ← Back to Dashboard
+
+                </a>
+
+            </div>
+
+
+        </section>
+
+    </main>
+
+
+
+    <!-- ================================
+         LOGOUT
+    ================================= -->
+
+    <script>
+
+        function logoutManager() {
+
+            localStorage.clear();
+
+            window.location.href =
+                "index.html";
+
+        }
+
+    </script>
+
+
+</body>
+
+</html>
+
