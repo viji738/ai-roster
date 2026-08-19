@@ -1,3 +1,108 @@
+
+
+
+
+
+
+
+
+
+
+
+
+// ================================
+// LOGOUT
+// ================================
+
+const logoutButton =
+    document.querySelector(".logout-btn");
+
+if (logoutButton) {
+
+    logoutButton.addEventListener("click", function() {
+
+        // Remove saved user information
+        localStorage.removeItem("userName");
+        localStorage.removeItem("userRole");
+        localStorage.removeItem("loginId");
+
+        // Go back to login page
+        window.location.href = "index.html";
+
+    });
+}
+
+
+
+
+
+
+
+
+
+
+
+
+// ================================
+// LOGIN PROTECTION
+// ================================
+
+const currentPage =
+    window.location.pathname.split("/").pop();
+
+const loggedInUser =
+    localStorage.getItem("userName");
+
+const loggedInRole =
+    localStorage.getItem("userRole");
+
+if (
+    (
+        currentPage === "dashboard.html" ||
+        currentPage === "manager-dashboard.html" ||
+        currentPage === "profile.html" ||
+        currentPage === "my-schedule.html"
+    )
+    &&
+    (
+        !loggedInUser ||
+        !loggedInRole
+    )
+) {
+    window.location.href = "index.html";
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // ================================
 // LOGIN
 // ================================
@@ -10,19 +115,163 @@ if (loginForm) {
 
         event.preventDefault();
 
-        const name = document.getElementById("name").value.trim();
-        const loginId = document.getElementById("loginId").value.trim();
-        const password = document.getElementById("password").value.trim();
-        const role = document.getElementById("role").value;
-        const message = document.getElementById("message");
+        // ================================
+        // GET INPUT VALUES
+        // ================================
 
-        if (name === "" || loginId === "" || password === "" || role === "") {
+        const name =
+            document.getElementById("name").value.trim();
 
-    message.textContent = "Please fill all the fields.";
-    message.style.color = "red";
+        const loginId =
+            document.getElementById("loginId").value.trim();
 
-    return;
-}
+        const password =
+            document.getElementById("password").value.trim();
+
+        const role =
+            document.getElementById("role").value;
+
+        const message =
+            document.getElementById("message");
+
+
+        // ================================
+        // EMPTY FIELD VALIDATION
+        // ================================
+
+        if (
+            name === "" ||
+            loginId === "" ||
+            password === "" ||
+            role === ""
+        ) {
+
+            message.textContent =
+                "Please fill all the fields.";
+
+            message.style.color = "red";
+
+            return;
+        }
+
+
+        // ================================
+        // LOGIN CREDENTIALS
+        // ================================
+
+        const accounts = {
+
+            Associate: {
+                loginId: "ASSOC001",
+                password: "Assoc@123"
+            },
+
+            Manager: {
+                loginId: "MAN001",
+                password: "Manager@123"
+            }
+
+        };
+
+
+        // ================================
+        // CHECK ROLE
+        // ================================
+
+        if (!accounts[role]) {
+
+            message.textContent =
+                "Invalid role selected.";
+
+            message.style.color = "red";
+
+            return;
+        }
+
+
+        // ================================
+        // CHECK LOGIN ID
+        // ================================
+
+        if (
+            loginId !== accounts[role].loginId
+        ) {
+
+            message.textContent =
+                "Invalid Login ID.";
+
+            message.style.color = "red";
+
+            return;
+        }
+
+
+        // ================================
+        // CHECK PASSWORD
+        // ================================
+
+        if (
+            password !== accounts[role].password
+        ) {
+
+            message.textContent =
+                "Incorrect password.";
+
+            message.style.color = "red";
+
+            return;
+        }
+
+
+        // ================================
+        // LOGIN SUCCESS
+        // ================================
+
+        localStorage.setItem(
+            "userName",
+            name
+        );
+
+        localStorage.setItem(
+            "userRole",
+            role
+        );
+
+        localStorage.setItem(
+            "loginId",
+            loginId
+        );
+
+
+        message.textContent =
+            "Login successful!";
+
+        message.style.color = "green";
+
+
+        // ================================
+        // ROLE BASED REDIRECT
+        // ================================
+
+        setTimeout(function() {
+
+            if (role === "Associate") {
+
+                window.location.href =
+                    "dashboard.html";
+
+            }
+
+            else if (role === "Manager") {
+
+                window.location.href =
+                    "manager-dashboard.html";
+
+            }
+
+        }, 1000);
+
+
 
 
 
@@ -99,6 +348,7 @@ if (role === "") {
 
 localStorage.setItem("userName", name);
 localStorage.setItem("userRole", role);
+
 
 
 message.textContent = "Login successful!";
