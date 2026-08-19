@@ -1,15 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
 // ================================
 // LOGOUT
 // ================================
@@ -21,26 +9,14 @@ if (logoutButton) {
 
     logoutButton.addEventListener("click", function() {
 
-        // Remove saved user information
         localStorage.removeItem("userName");
         localStorage.removeItem("userRole");
         localStorage.removeItem("loginId");
 
-        // Go back to login page
         window.location.href = "index.html";
 
     });
 }
-
-
-
-
-
-
-
-
-
-
 
 
 // ================================
@@ -69,51 +45,24 @@ if (
         !loggedInRole
     )
 ) {
+
     window.location.href = "index.html";
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 // ================================
 // LOGIN
 // ================================
 
-const loginForm = document.getElementById("loginForm");
+const loginForm =
+    document.getElementById("loginForm");
 
 if (loginForm) {
 
     loginForm.addEventListener("submit", function(event) {
 
         event.preventDefault();
+
 
         // ================================
         // GET INPUT VALUES
@@ -271,116 +220,6 @@ if (loginForm) {
 
         }, 1000);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// ================================
-// ROLE VALIDATION
-// ================================
-
-// ================================
-// ROLE VALIDATION & REDIRECT
-// ================================
-
-if (role === "") {
-
-    message.textContent = "Please select a role.";
-    message.style.color = "red";
-
-    return;
-}
-
-
-// Save user information
-
-localStorage.setItem("userName", name);
-localStorage.setItem("userRole", role);
-
-
-
-message.textContent = "Login successful!";
-message.style.color = "green";
-
-
-// ================================
-// ROLE BASED DASHBOARD
-// ================================
-
-setTimeout(function() {
-
-    if (role === "Associate") {
-
-        window.location.href = "dashboard.html";
-
-    }
-    else if (role === "Manager") {
-
-        window.location.href = "manager-dashboard.html";
-
-    }
-    else {
-
-        message.textContent =
-            "This role does not have dashboard access.";
-
-        message.style.color = "red";
-
-    }
-
-}, 1000);
     });
 }
 
@@ -389,8 +228,11 @@ setTimeout(function() {
 // USER DETAILS
 // ================================
 
-const userName = localStorage.getItem("userName");
-const userRole = localStorage.getItem("userRole");
+const userName =
+    localStorage.getItem("userName");
+
+const userRole =
+    localStorage.getItem("userRole");
 
 const userNameElement =
     document.getElementById("userName");
@@ -399,17 +241,16 @@ const userRoleElement =
     document.getElementById("userRole");
 
 if (userNameElement && userName) {
-    userNameElement.textContent = userName;
+
+    userNameElement.textContent =
+        userName;
 }
 
 if (userRoleElement && userRole) {
-    userRoleElement.textContent = userRole;
+
+    userRoleElement.textContent =
+        userRole;
 }
-
-
-
-
-
 
 
 // ================================
@@ -494,23 +335,8 @@ if (profileRoleInfoElement && savedRole) {
 if (profileInitialElement && savedName) {
 
     profileInitialElement.textContent =
-        savedName
-            .charAt(0)
-            .toUpperCase();
+        savedName.charAt(0).toUpperCase();
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 // ================================
@@ -521,17 +347,18 @@ if (profileInitialElement && savedName) {
 // 2 DAYS OFF
 // ================================
 
-const calendar = document.getElementById("calendar");
+const calendar =
+    document.getElementById("calendar");
 
 if (calendar) {
-
-    // ================================
-    // MONTH NAVIGATION VARIABLES
-    // ================================
 
     let navigationYear = 2026;
     let navigationMonth = 7; // August
 
+
+    // ================================
+    // ELEMENTS
+    // ================================
 
     const currentMonthElement =
         document.getElementById("currentMonth");
@@ -541,11 +368,6 @@ if (calendar) {
 
     const nextMonthButton =
         document.getElementById("nextMonth");
-
-
-    // ================================
-    // SUMMARY ELEMENTS
-    // ================================
 
     const todayShiftElement =
         document.getElementById("todayShift");
@@ -559,11 +381,6 @@ if (calendar) {
     const weekOffElement =
         document.getElementById("weekOff");
 
-
-    // ================================
-    // NEXT SHIFT ELEMENTS
-    // ================================
-
     const nextShiftElement =
         document.getElementById("nextShift");
 
@@ -572,11 +389,6 @@ if (calendar) {
 
     const nextShiftTimeElement =
         document.getElementById("nextShiftTime");
-
-
-    // ================================
-    // UPCOMING SCHEDULE
-    // ================================
 
     const upcomingSchedule =
         document.getElementById("upcomingSchedule");
@@ -608,23 +420,11 @@ if (calendar) {
 
     function getShift(year, month, date) {
 
-        /*
-         * Rotation starts from:
-         *
-         * August 1, 2026 = Day Shift
-         *
-         * 5 Day
-         * 2 Off
-         * 5 Night
-         * 2 Off
-         */
-
         const baseDate =
             new Date(2026, 7, 1);
 
         const currentDate =
             new Date(year, month, date);
-
 
         const difference =
             Math.floor(
@@ -634,13 +434,12 @@ if (calendar) {
                 (1000 * 60 * 60 * 24)
             );
 
-
-        // Handle negative values correctly
         const cycleDay =
             ((difference % 14) + 14) % 14;
 
 
         // Day Shift
+
         if (cycleDay < 5) {
 
             return {
@@ -653,7 +452,8 @@ if (calendar) {
         }
 
 
-        // First Week Off
+        // Week Off
+
         if (cycleDay < 7) {
 
             return {
@@ -667,6 +467,7 @@ if (calendar) {
 
 
         // Night Shift
+
         if (cycleDay < 12) {
 
             return {
@@ -679,7 +480,8 @@ if (calendar) {
         }
 
 
-        // Second Week Off
+        // Week Off
+
         return {
             shift: "Week Off",
             shortName: "WEEK OFF",
@@ -696,13 +498,8 @@ if (calendar) {
 
     function createCalendar(year, month) {
 
-        // Clear calendar
         calendar.innerHTML = "";
 
-
-        // ================================
-        // UPDATE MONTH TITLE
-        // ================================
 
         if (currentMonthElement) {
 
@@ -710,10 +507,6 @@ if (calendar) {
                 monthNames[month] + " " + year;
         }
 
-
-        // ================================
-        // DAY NAMES
-        // ================================
 
         const dayNames = [
             "Sun",
@@ -739,10 +532,6 @@ if (calendar) {
         });
 
 
-        // ================================
-        // FIRST DAY OF MONTH
-        // ================================
-
         const firstDay =
             new Date(
                 year,
@@ -751,10 +540,6 @@ if (calendar) {
             ).getDay();
 
 
-        // ================================
-        // TOTAL DAYS
-        // ================================
-
         const totalDays =
             new Date(
                 year,
@@ -762,10 +547,6 @@ if (calendar) {
                 0
             ).getDate();
 
-
-        // ================================
-        // EMPTY BOXES
-        // ================================
 
         for (
             let i = 0;
@@ -782,10 +563,6 @@ if (calendar) {
         }
 
 
-        // ================================
-        // CREATE DATES
-        // ================================
-
         for (
             let date = 1;
             date <= totalDays;
@@ -798,25 +575,17 @@ if (calendar) {
             dateBox.classList.add("date");
 
 
-            // ================================
-            // DATE NUMBER
-            // ================================
-
             const dateNumber =
                 document.createElement("span");
 
-            dateNumber.textContent = date;
+            dateNumber.textContent =
+                date;
 
             dateBox.appendChild(dateNumber);
 
 
-            // ================================
-            // SHIFT
-            // ================================
-
             const shift =
                 document.createElement("small");
-
 
             const shiftInfo =
                 getShift(
@@ -825,21 +594,16 @@ if (calendar) {
                     date
                 );
 
-
             shift.textContent =
                 shiftInfo.shortName;
-
 
             dateBox.classList.add(
                 shiftInfo.className
             );
 
 
-            // ================================
-            // TODAY HIGHLIGHT
-            // ================================
-
-            const today = new Date();
+            const today =
+                new Date();
 
             if (
                 year === today.getFullYear() &&
@@ -864,23 +628,14 @@ if (calendar) {
 
     function updateTodayShift() {
 
-        const today = new Date();
-
-        const currentYear =
-            today.getFullYear();
-
-        const currentMonth =
-            today.getMonth();
-
-        const currentDate =
-            today.getDate();
-
+        const today =
+            new Date();
 
         const todayInfo =
             getShift(
-                currentYear,
-                currentMonth,
-                currentDate
+                today.getFullYear(),
+                today.getMonth(),
+                today.getDate()
             );
 
 
@@ -928,20 +683,17 @@ if (calendar) {
         }
 
 
-        const today = new Date();
-
+        const today =
+            new Date();
 
         let nextDate =
             new Date(today);
 
-
-        // Start from tomorrow
         nextDate.setDate(
             nextDate.getDate() + 1
         );
 
 
-        // Find next working day
         while (true) {
 
             const shiftInfo =
@@ -957,7 +709,6 @@ if (calendar) {
                 nextShiftElement.textContent =
                     shiftInfo.shift;
 
-
                 nextShiftDateElement.textContent =
                     nextDate.toLocaleDateString(
                         "en-US",
@@ -969,10 +720,8 @@ if (calendar) {
                         }
                     );
 
-
                 nextShiftTimeElement.textContent =
                     shiftInfo.timing;
-
 
                 break;
             }
@@ -999,7 +748,8 @@ if (calendar) {
         upcomingSchedule.innerHTML = "";
 
 
-        const today = new Date();
+        const today =
+            new Date();
 
 
         for (
@@ -1011,33 +761,18 @@ if (calendar) {
             const scheduleDate =
                 new Date(today);
 
-
             scheduleDate.setDate(
                 today.getDate() + i
             );
 
 
-            const year =
-                scheduleDate.getFullYear();
-
-            const month =
-                scheduleDate.getMonth();
-
-            const date =
-                scheduleDate.getDate();
-
-
             const shiftInfo =
                 getShift(
-                    year,
-                    month,
-                    date
+                    scheduleDate.getFullYear(),
+                    scheduleDate.getMonth(),
+                    scheduleDate.getDate()
                 );
 
-
-            // ================================
-            // SCHEDULE CARD
-            // ================================
 
             const scheduleCard =
                 document.createElement("div");
@@ -1047,14 +782,12 @@ if (calendar) {
             );
 
 
-            // Date
             const dateElement =
                 document.createElement("div");
 
             dateElement.classList.add(
                 "schedule-date"
             );
-
 
             dateElement.textContent =
                 scheduleDate.toLocaleDateString(
@@ -1067,7 +800,6 @@ if (calendar) {
                 );
 
 
-            // Shift
             const shiftElement =
                 document.createElement("div");
 
@@ -1079,7 +811,6 @@ if (calendar) {
                 shiftInfo.shift;
 
 
-            // Timing
             const timingElement =
                 document.createElement("div");
 
@@ -1091,7 +822,6 @@ if (calendar) {
                 shiftInfo.timing;
 
 
-            // Status
             const statusElement =
                 document.createElement("div");
 
@@ -1103,7 +833,6 @@ if (calendar) {
                 shiftInfo.status;
 
 
-            // Add elements
             scheduleCard.appendChild(
                 dateElement
             );
@@ -1192,7 +921,6 @@ if (calendar) {
         navigationYear,
         navigationMonth
     );
-
 
     updateTodayShift();
 
