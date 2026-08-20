@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 
@@ -36,9 +37,9 @@
 
         </nav>
 
-        <button class="logout-btn" onclick="logoutUser()">
-    Logout
-</button>
+        <button class="logout-btn" id="logoutButton">
+            Logout
+        </button>
 
     </aside>
 
@@ -83,9 +84,11 @@
             <div class="profile-header">
 
                 <div class="profile-avatar">
+
                     <span id="profileInitial">
                         U
                     </span>
+
                 </div>
 
                 <div>
@@ -234,25 +237,105 @@
 
             </div>
 
+
+            <!-- ================================
+                 CHANGE PASSWORD
+            ================================= -->
+
+            <div class="profile-card">
+
+                <h2>Change Password</h2>
+
+                <form id="changePasswordForm">
+
+                    <!-- Current Password -->
+
+                    <div class="profile-field">
+
+                        <label for="currentPassword">
+                            Current Password
+                        </label>
+
+                        <input
+                            type="password"
+                            id="currentPassword"
+                            placeholder="Enter current password"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- New Password -->
+
+                    <div class="profile-field">
+
+                        <label for="newPassword">
+                            New Password
+                        </label>
+
+                        <input
+                            type="password"
+                            id="newPassword"
+                            placeholder="Enter new password"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- Confirm Password -->
+
+                    <div class="profile-field">
+
+                        <label for="confirmPassword">
+                            Confirm New Password
+                        </label>
+
+                        <input
+                            type="password"
+                            id="confirmPassword"
+                            placeholder="Confirm new password"
+                            required
+                        >
+
+                    </div>
+
+
+                    <!-- Change Password Button -->
+
+                    <button
+                        type="submit"
+                        class="logout-btn"
+                        id="changePasswordButton"
+                    >
+                        Change Password
+                    </button>
+
+
+                    <!-- Message -->
+
+                    <p
+                        id="passwordMessage"
+                        style="margin-top: 15px;"
+                    ></p>
+
+                </form>
+
+            </div>
+
         </section>
 
     </main>
 
 
-   
+    <!-- ================================
+         JAVASCRIPT
+    ================================= -->
 
-
-   
-
-<script>
-function logoutUser() {
-
-    localStorage.clear();
-
-    window.location.href = "./index.html";
-}
-</script>
+    <script src="script.js"></script>
 
 </body>
 
 </html>
+```
