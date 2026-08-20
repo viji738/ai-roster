@@ -1283,3 +1283,257 @@ if (calendar) {
     updateUpcomingSchedule();
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ======================================================
+// CHANGE PASSWORD
+// ======================================================
+
+const changePasswordForm =
+    document.getElementById("changePasswordForm");
+
+if (changePasswordForm) {
+
+    changePasswordForm.addEventListener(
+        "submit",
+        async function (event) {
+
+            event.preventDefault();
+
+            const currentPassword =
+                document.getElementById("currentPassword")
+                    .value
+                    .trim();
+
+            const newPassword =
+                document.getElementById("newPassword")
+                    .value
+                    .trim();
+
+            const confirmPassword =
+                document.getElementById("confirmPassword")
+                    .value
+                    .trim();
+
+            const passwordMessage =
+                document.getElementById("passwordMessage");
+
+            const loginId =
+                localStorage.getItem("loginId");
+
+
+            // ==========================================
+            // CHECK LOGIN ID
+            // ==========================================
+
+            if (!loginId) {
+
+                passwordMessage.textContent =
+                    "User login information not found.";
+
+                passwordMessage.style.color =
+                    "red";
+
+                return;
+            }
+
+
+            // ==========================================
+            // CHECK EMPTY FIELDS
+            // ==========================================
+
+            if (
+                !currentPassword ||
+                !newPassword ||
+                !confirmPassword
+            ) {
+
+                passwordMessage.textContent =
+                    "Please fill all the fields.";
+
+                passwordMessage.style.color =
+                    "red";
+
+                return;
+            }
+
+
+            // ==========================================
+            // PASSWORD LENGTH
+            // ==========================================
+
+            if (newPassword.length < 8) {
+
+                passwordMessage.textContent =
+                    "New password must be at least 8 characters.";
+
+                passwordMessage.style.color =
+                    "red";
+
+                return;
+            }
+
+
+            // ==========================================
+            // PASSWORD MATCH
+            // ==========================================
+
+            if (newPassword !== confirmPassword) {
+
+                passwordMessage.textContent =
+                    "New passwords do not match.";
+
+                passwordMessage.style.color =
+                    "red";
+
+                return;
+            }
+
+
+            // ==========================================
+            // CONNECT TO BACKEND
+            // ==========================================
+
+            passwordMessage.textContent =
+                "Changing password...";
+
+            passwordMessage.style.color =
+                "blue";
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        "https://ai-roster-backend.onrender.com/change-password",
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
+
+                            body:
+                                JSON.stringify({
+
+                                    loginId:
+                                        loginId,
+
+                                    currentPassword:
+                                        currentPassword,
+
+                                    newPassword:
+                                        newPassword,
+
+                                    confirmPassword:
+                                        confirmPassword
+
+                                })
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                // ======================================
+                // PASSWORD CHANGE FAILED
+                // ======================================
+
+                if (
+                    !response.ok ||
+                    !data.success
+                ) {
+
+                    passwordMessage.textContent =
+                        data.message ||
+                        "Password change failed.";
+
+                    passwordMessage.style.color =
+                        "red";
+
+                    return;
+                }
+
+
+                // ======================================
+                // PASSWORD CHANGE SUCCESS
+                // ======================================
+
+                passwordMessage.textContent =
+                    "Password changed successfully!";
+
+                passwordMessage.style.color =
+                    "green";
+
+
+                // Clear password fields
+
+                document.getElementById(
+                    "currentPassword"
+                ).value = "";
+
+                document.getElementById(
+                    "newPassword"
+                ).value = "";
+
+                document.getElementById(
+                    "confirmPassword"
+                ).value = "";
+
+            }
+
+
+            // ==========================================
+            // CONNECTION ERROR
+            // ==========================================
+
+            catch (error) {
+
+                console.error(
+                    "Change password error:",
+                    error
+                );
+
+                passwordMessage.textContent =
+                    "Cannot connect to server.";
+
+                passwordMessage.style.color =
+                    "red";
+            }
+
+        }
+    );
+}
