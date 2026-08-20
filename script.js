@@ -1,6 +1,7 @@
 // ======================================================
 // AI AUTOMATIC ROSTER SYSTEM
-// LOGIN + LOGOUT + ROLE PROTECTION + PROFILE + CALENDAR
+// BACKEND LOGIN + LOGOUT + ROLE PROTECTION
+// PROFILE + CALENDAR
 // ======================================================
 
 
@@ -44,7 +45,10 @@ const associatePages = [
 
 const managerPages = [
     "manager-dashboard.html",
-    "employee-details.html"
+    "employees.html",
+    "employee-details.html",
+    "schedule2.html",
+    "manager-profile.html"
 ];
 
 
@@ -71,9 +75,7 @@ if (
     !isLoginPage
 ) {
 
-    // ----------------------------------------------
-    // ASSOCIATE PAGES
-    // ----------------------------------------------
+    // Associate pages
 
     if (
         associatePages.includes(currentPage) &&
@@ -84,9 +86,7 @@ if (
     }
 
 
-    // ----------------------------------------------
-    // MANAGER PAGES
-    // ----------------------------------------------
+    // Manager pages
 
     if (
         managerPages.includes(currentPage) &&
@@ -104,10 +104,34 @@ if (
 
 function logoutUser() {
 
+    // Clear login session
     localStorage.removeItem("userName");
     localStorage.removeItem("userRole");
     localStorage.removeItem("loginId");
 
+    // Clear login form fields
+    const nameInput = document.getElementById("name");
+    const loginIdInput = document.getElementById("loginId");
+    const passwordInput = document.getElementById("password");
+    const roleInput = document.getElementById("role");
+
+    if (nameInput) {
+        nameInput.value = "";
+    }
+
+    if (loginIdInput) {
+        loginIdInput.value = "";
+    }
+
+    if (passwordInput) {
+        passwordInput.value = "";
+    }
+
+    if (roleInput) {
+        roleInput.value = "";
+    }
+
+    // Go back to login page
     window.location.replace("index.html");
 }
 
@@ -133,7 +157,7 @@ if (logoutButton) {
 
 
 // ======================================================
-// LOGIN
+// LOGIN - BACKEND API
 // ======================================================
 
 const loginForm =
@@ -144,14 +168,14 @@ if (loginForm) {
 
     loginForm.addEventListener(
         "submit",
-        function (event) {
+        async function (event) {
 
             event.preventDefault();
 
 
-            // ==================================================
+            // ==========================================
             // GET VALUES
-            // ==================================================
+            // ==========================================
 
             const name =
                 document.getElementById("name")
@@ -176,9 +200,9 @@ if (loginForm) {
                 document.getElementById("message");
 
 
-            // ==================================================
+            // ==========================================
             // EMPTY VALIDATION
-            // ==================================================
+            // ==========================================
 
             if (
                 name === "" ||
@@ -197,138 +221,155 @@ if (loginForm) {
             }
 
 
-            // ==================================================
-            // ACCOUNTS
-            // ==================================================
-
-            const accounts = {
-
-                Associate: {
-
-                    loginId: "ASSOC001",
-
-                    password: "Assoc@123"
-                },
-
-                Manager: {
-
-                    loginId: "MAN001",
-
-                    password: "Manager@123"
-                }
-
-            };
-
-
-            // ==================================================
-            // ROLE CHECK
-            // ==================================================
-
-            if (!accounts[role]) {
-
-                message.textContent =
-                    "Invalid role selected.";
-
-                message.style.color =
-                    "red";
-
-                return;
-            }
-
-
-            // ==================================================
-            // LOGIN ID CHECK
-            // ==================================================
-
-            if (
-                loginId !==
-                accounts[role].loginId
-            ) {
-
-                message.textContent =
-                    "Invalid Login ID.";
-
-                message.style.color =
-                    "red";
-
-                return;
-            }
-
-
-            // ==================================================
-            // PASSWORD CHECK
-            // ==================================================
-
-            if (
-                password !==
-                accounts[role].password
-            ) {
-
-                message.textContent =
-                    "Incorrect password.";
-
-                message.style.color =
-                    "red";
-
-                return;
-            }
-
-
-            // ==================================================
-            // LOGIN SUCCESS
-            // ==================================================
-
-            localStorage.setItem(
-                "userName",
-                name
-            );
-
-            localStorage.setItem(
-                "userRole",
-                role
-            );
-
-            localStorage.setItem(
-                "loginId",
-                loginId
-            );
-
+            // ==========================================
+            // CHECK BACKEND
+            // ==========================================
 
             message.textContent =
-                "Login successful!";
+                "Checking login...";
 
             message.style.color =
-                "green";
+                "blue";
 
 
-            // ==================================================
-            // ROLE BASED REDIRECT
-            // ==================================================
+            try {
+                console.log("LOGIN REQUEST STARTED");
 
-            setTimeout(
-                function () {
+                const response =
+                    await fetch(
+                        "http://127.0.0.1:5000/login",
+                        {
+                            method: "POST",
 
-                    if (
-                        role === "Associate"
-                    ) {
+                            headers: {
+                                "Content-Type":
+                                    "application/json"
+                            },
 
-                        window.location.replace(
-                            "dashboard.html"
-                        );
-                    }
+                            body:
+                                JSON.stringify({
 
-                    else if (
-                        role === "Manager"
-                    ) {
+                                    name: name,
 
-                        window.location.replace(
-                            "manager-dashboard.html"
-                        );
-                    }
+                                    loginId: loginId,
 
-                },
-                700
-            );
+                                    password: password,
+
+                                    role: role
+
+                                })
+                        }
+                    );
+
+
+                // ======================================
+                // SERVER RESPONSE
+                // ======================================
+
+                const data =
+                    await response.json();
+
+
+                // ======================================
+                // LOGIN FAILED
+                // ======================================
+
+                if (
+                    !response.ok ||
+                    !data.success
+                ) {
+
+                    message.textContent =
+                        data.message ||
+                        "Login failed.";
+
+                    message.style.color =
+                        "red";
+
+                    return;
+                }
+
+
+                // ======================================
+                // LOGIN SUCCESS
+                // ======================================
+
+                localStorage.setItem(
+                    "userName",
+                    data.user.name
+                );
+
+                localStorage.setItem(
+                    "userRole",
+                    data.user.role
+                );
+
+                localStorage.setItem(
+                    "loginId",
+                    data.user.loginId
+                );
+
+
+                message.textContent =
+                    "Login successful!";
+
+                message.style.color =
+                    "green";
+
+
+                // ======================================
+                // ROLE BASED REDIRECT
+                // ======================================
+
+                setTimeout(
+                    function () {
+
+                        if (
+                            data.user.role ===
+                            "Associate"
+                        ) {
+
+                            window.location.replace(
+                                "dashboard.html"
+                            );
+
+                        }
+
+                        else if (
+                            data.user.role ===
+                            "Manager"
+                        ) {
+
+                            window.location.replace(
+                                "manager-dashboard.html"
+                            );
+
+                        }
+
+                    },
+                    500
+                );
+
+            }
+
+
+            // ==========================================
+            // BACKEND CONNECTION ERROR
+            // ==========================================
+
+            catch (error) {
+
+                console.error(
+                    "Backend connection error:",
+                    error
+                );
+
+                message.textContent =
+                    "Cannot connect to server. Please start the backend.";
+
+                message.style.color =
+                    "red";
+            }
 
         }
     );
@@ -495,22 +536,12 @@ if (
 // ======================================================
 // CALENDAR
 // ======================================================
-// 5 DAYS DAY
-// 2 DAYS OFF
-// 5 DAYS NIGHT
-// 2 DAYS OFF
-// ======================================================
 
 const calendar =
     document.getElementById("calendar");
 
 
 if (calendar) {
-
-
-    // ==================================================
-    // MONTH NAVIGATION
-    // ==================================================
 
     let navigationYear = 2026;
 
@@ -533,10 +564,6 @@ if (calendar) {
         );
 
 
-    // ==================================================
-    // SUMMARY
-    // ==================================================
-
     const todayShiftElement =
         document.getElementById(
             "todayShift"
@@ -558,10 +585,6 @@ if (calendar) {
         );
 
 
-    // ==================================================
-    // NEXT SHIFT
-    // ==================================================
-
     const nextShiftElement =
         document.getElementById(
             "nextShift"
@@ -578,19 +601,11 @@ if (calendar) {
         );
 
 
-    // ==================================================
-    // UPCOMING SCHEDULE
-    // ==================================================
-
     const upcomingSchedule =
         document.getElementById(
             "upcomingSchedule"
         );
 
-
-    // ==================================================
-    // MONTH NAMES
-    // ==================================================
 
     const monthNames = [
 
@@ -619,8 +634,6 @@ if (calendar) {
         month,
         date
     ) {
-
-        // August 1, 2026 = Day Shift
 
         const baseDate =
             new Date(
@@ -686,7 +699,7 @@ if (calendar) {
 
 
         // ==================================================
-        // FIRST OFF
+        // FIRST WEEK OFF
         // ==================================================
 
         if (
@@ -737,7 +750,7 @@ if (calendar) {
 
 
         // ==================================================
-        // SECOND OFF
+        // SECOND WEEK OFF
         // ==================================================
 
         return {
@@ -769,13 +782,7 @@ if (calendar) {
         calendar.innerHTML = "";
 
 
-        // ==================================================
-        // MONTH TITLE
-        // ==================================================
-
-        if (
-            currentMonthElement
-        ) {
+        if (currentMonthElement) {
 
             currentMonthElement.textContent =
                 monthNames[month] +
@@ -783,10 +790,6 @@ if (calendar) {
                 year;
         }
 
-
-        // ==================================================
-        // DAY NAMES
-        // ==================================================
 
         const dayNames = [
 
@@ -823,10 +826,6 @@ if (calendar) {
         );
 
 
-        // ==================================================
-        // FIRST DAY
-        // ==================================================
-
         const firstDay =
             new Date(
                 year,
@@ -835,10 +834,6 @@ if (calendar) {
             ).getDay();
 
 
-        // ==================================================
-        // TOTAL DAYS
-        // ==================================================
-
         const totalDays =
             new Date(
                 year,
@@ -846,10 +841,6 @@ if (calendar) {
                 0
             ).getDate();
 
-
-        // ==================================================
-        // EMPTY BOXES
-        // ==================================================
 
         for (
             let i = 0;
@@ -872,10 +863,6 @@ if (calendar) {
         }
 
 
-        // ==================================================
-        // DATES
-        // ==================================================
-
         for (
             let date = 1;
             date <= totalDays;
@@ -892,8 +879,6 @@ if (calendar) {
             );
 
 
-            // Date number
-
             const dateNumber =
                 document.createElement(
                     "span"
@@ -906,8 +891,6 @@ if (calendar) {
                 dateNumber
             );
 
-
-            // Shift
 
             const shift =
                 document.createElement(
@@ -931,8 +914,6 @@ if (calendar) {
                 shiftInfo.className
             );
 
-
-            // Today
 
             const today =
                 new Date();
@@ -982,36 +963,28 @@ if (calendar) {
             );
 
 
-        if (
-            todayShiftElement
-        ) {
+        if (todayShiftElement) {
 
             todayShiftElement.textContent =
                 todayInfo.shift;
         }
 
 
-        if (
-            currentRotationElement
-        ) {
+        if (currentRotationElement) {
 
             currentRotationElement.textContent =
                 todayInfo.shift;
         }
 
 
-        if (
-            workingDaysElement
-        ) {
+        if (workingDaysElement) {
 
             workingDaysElement.textContent =
                 "5 Days";
         }
 
 
-        if (
-            weekOffElement
-        ) {
+        if (weekOffElement) {
 
             weekOffElement.textContent =
                 "2 Days";
@@ -1071,17 +1044,10 @@ if (calendar) {
                     nextDate.toLocaleDateString(
                         "en-US",
                         {
-                            weekday:
-                                "long",
-
-                            month:
-                                "long",
-
-                            day:
-                                "numeric",
-
-                            year:
-                                "numeric"
+                            weekday: "long",
+                            month: "long",
+                            day: "numeric",
+                            year: "numeric"
                         }
                     );
 
@@ -1107,9 +1073,7 @@ if (calendar) {
 
     function updateUpcomingSchedule() {
 
-        if (
-            !upcomingSchedule
-        ) {
+        if (!upcomingSchedule) {
 
             return;
         }
@@ -1146,8 +1110,6 @@ if (calendar) {
                 );
 
 
-            // Schedule card
-
             const scheduleCard =
                 document.createElement(
                     "div"
@@ -1157,8 +1119,6 @@ if (calendar) {
                 "schedule-item"
             );
 
-
-            // Date
 
             const dateElement =
                 document.createElement(
@@ -1173,19 +1133,12 @@ if (calendar) {
                 scheduleDate.toLocaleDateString(
                     "en-US",
                     {
-                        weekday:
-                            "short",
-
-                        month:
-                            "short",
-
-                        day:
-                            "numeric"
+                        weekday: "short",
+                        month: "short",
+                        day: "numeric"
                     }
                 );
 
-
-            // Shift
 
             const shiftElement =
                 document.createElement(
@@ -1200,8 +1153,6 @@ if (calendar) {
                 shiftInfo.shift;
 
 
-            // Time
-
             const timingElement =
                 document.createElement(
                     "div"
@@ -1215,8 +1166,6 @@ if (calendar) {
                 shiftInfo.timing;
 
 
-            // Status
-
             const statusElement =
                 document.createElement(
                     "div"
@@ -1229,8 +1178,6 @@ if (calendar) {
             statusElement.textContent =
                 shiftInfo.status;
 
-
-            // Add elements
 
             scheduleCard.appendChild(
                 dateElement
@@ -1260,9 +1207,7 @@ if (calendar) {
     // PREVIOUS MONTH
     // ==================================================
 
-    if (
-        prevMonthButton
-    ) {
+    if (prevMonthButton) {
 
         prevMonthButton.addEventListener(
             "click",
@@ -1285,7 +1230,6 @@ if (calendar) {
                     navigationYear,
                     navigationMonth
                 );
-
             }
         );
     }
@@ -1295,9 +1239,7 @@ if (calendar) {
     // NEXT MONTH
     // ==================================================
 
-    if (
-        nextMonthButton
-    ) {
+    if (nextMonthButton) {
 
         nextMonthButton.addEventListener(
             "click",
@@ -1320,7 +1262,6 @@ if (calendar) {
                     navigationYear,
                     navigationMonth
                 );
-
             }
         );
     }
@@ -1334,7 +1275,6 @@ if (calendar) {
         navigationYear,
         navigationMonth
     );
-
 
     updateTodayShift();
 
