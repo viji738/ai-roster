@@ -1,19 +1,30 @@
 <!DOCTYPE html>
+
 <html lang="en">
 
 <head>
 
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Manager Dashboard - AI Roster</title>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <link rel="stylesheet" href="dashboard.css">
+    <title>
+        Manager Dashboard - AI Roster
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="dashboard.css"
+    >
 
 </head>
 
+
 <body>
-    
+
 
     <!-- ================================
          SIDEBAR
@@ -21,38 +32,47 @@
 
     <aside class="sidebar">
 
-        <h2>AI Roster</h2>
+        <h2>
+            AI Roster
+        </h2>
+
 
         <nav>
 
-    <a href="manager-dashboard.html" class="active">
-        Dashboard
-    </a>
-
-    <a href="employees.html">
-        Employees
-    </a>
-
-    <a href="schedule2.html">
-        Schedule
-    </a>
-
-    <a href="./manager-profile.html">
-       Profile
-    </a>
+            <a
+                href="manager-dashboard.html"
+                class="active"
+            >
+                Dashboard
+            </a>
 
 
-</nav>
+            <a href="employees.html">
+                Employees
+            </a>
+
+
+            <a href="schedule2.html">
+                Schedule
+            </a>
+
+
+            <a href="./manager-profile.html">
+                Profile
+            </a>
+
+        </nav>
+
 
         <button
             class="logout-btn"
-            onclick="logoutManager()">
-
+            onclick="logoutManager()"
+        >
             Logout
-
         </button>
 
     </aside>
+
 
 
     <!-- ================================
@@ -70,14 +90,21 @@
 
             <div>
 
-                <h1>Manager</h1>
+                <h1>
+                    Manager
+                </h1>
+
 
                 <p>
+
                     Welcome back,
+
                     <span id="managerName">
                         Manager
                     </span>
+
                     👋
+
                 </p>
 
             </div>
@@ -85,13 +112,68 @@
 
             <div
                 class="user-role"
-                id="managerRole">
+                id="managerRole"
+            >
 
                 Manager
 
             </div>
 
         </header>
+
+
+
+        <!-- ==========================================
+             CREATE ASSOCIATE ACCOUNT
+        ========================================== -->
+
+        <section
+            class="schedule-section"
+            style="margin-bottom:30px;"
+        >
+
+            <div class="schedule-header">
+
+                <div>
+
+                    <h2>
+                        Create Associate Account
+                    </h2>
+
+
+                    <p>
+                        Create a new associate employee account
+                    </p>
+
+                </div>
+
+
+                <div>
+
+                    <button
+                        type="button"
+                        onclick="window.location.href='create-associate.html'"
+                        style="
+                            padding:12px 22px;
+                            border:none;
+                            border-radius:8px;
+                            background:#2563eb;
+                            color:white;
+                            font-size:15px;
+                            font-weight:600;
+                            cursor:pointer;
+                        "
+                    >
+
+                        + Create Associate Account
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
 
 
 
@@ -110,11 +192,13 @@
                     Total Employees
                 </h3>
 
+
                 <p>
                     25
                 </p>
 
             </div>
+
 
 
             <!-- Day Shift -->
@@ -125,11 +209,13 @@
                     ☀️ Day Shift
                 </h3>
 
+
                 <p class="shift-day">
                     10
                 </p>
 
             </div>
+
 
 
             <!-- Night Shift -->
@@ -140,11 +226,13 @@
                     🌙 Night Shift
                 </h3>
 
+
                 <p style="color:#15803d;">
                     8
                 </p>
 
             </div>
+
 
 
             <!-- Week Off -->
@@ -154,6 +242,7 @@
                 <h3>
                     🔴 Week Off
                 </h3>
+
 
                 <p style="color:#dc2626;">
                     7
@@ -171,6 +260,7 @@
 
         <section class="schedule-section">
 
+
             <div class="schedule-header">
 
                 <div>
@@ -178,6 +268,7 @@
                     <h2>
                         Today's Team Schedule
                     </h2>
+
 
                     <p>
                         Employee shift status for today
@@ -192,9 +283,11 @@
                         🔵 Day
                     </span>
 
+
                     <span>
                         🟢 Night
                     </span>
+
 
                     <span>
                         🔴 Week Off
@@ -212,63 +305,78 @@
 
             <div style="overflow-x:auto;">
 
+
                 <table
                     style="
-                    width:100%;
-                    border-collapse:collapse;
-                    margin-top:10px;
-                    ">
+                        width:100%;
+                        border-collapse:collapse;
+                        margin-top:10px;
+                    "
+                >
+
 
                     <thead>
 
                         <tr
                             style="
-                            background:#eef3f8;
-                            ">
+                                background:#eef3f8;
+                            "
+                        >
+
 
                             <th
                                 style="
-                                padding:15px;
-                                text-align:left;
-                                ">
+                                    padding:15px;
+                                    text-align:left;
+                                "
+                            >
                                 Employee
                             </th>
 
+
                             <th
                                 style="
-                                padding:15px;
-                                text-align:left;
-                                ">
+                                    padding:15px;
+                                    text-align:left;
+                                "
+                            >
                                 Role
                             </th>
 
+
                             <th
                                 style="
-                                padding:15px;
-                                text-align:left;
-                                ">
+                                    padding:15px;
+                                    text-align:left;
+                                "
+                            >
                                 Shift
                             </th>
 
-                            <th
-                                style="
-                                padding:15px;
-                                text-align:left;
-                                ">
-                                Timing
-                            </th>
 
                             <th
                                 style="
-                                padding:15px;
-                                text-align:left;
-                                ">
+                                    padding:15px;
+                                    text-align:left;
+                                "
+                            >
+                                Timing
+                            </th>
+
+
+                            <th
+                                style="
+                                    padding:15px;
+                                    text-align:left;
+                                "
+                            >
                                 Status
                             </th>
 
                         </tr>
 
                     </thead>
+
 
 
                     <tbody>
@@ -282,31 +390,37 @@
                                 Arun Kumar
                             </td>
 
+
                             <td style="padding:15px;">
                                 Associate
                             </td>
 
+
                             <td
                                 style="
-                                padding:15px;
-                                color:#1d4ed8;
-                                font-weight:bold;
-                                ">
+                                    padding:15px;
+                                    color:#1d4ed8;
+                                    font-weight:bold;
+                                "
+                            >
 
                                 Day Shift
 
                             </td>
 
+
                             <td style="padding:15px;">
                                 9:00 AM - 6:00 PM
                             </td>
 
+
                             <td
                                 style="
-                                padding:15px;
-                                color:#16a34a;
-                                font-weight:bold;
-                                ">
+                                    padding:15px;
+                                    color:#16a34a;
+                                    font-weight:bold;
+                                "
+                            >
 
                                 Working
 
@@ -324,31 +438,37 @@
                                 Priya
                             </td>
 
+
                             <td style="padding:15px;">
                                 Associate
                             </td>
 
+
                             <td
                                 style="
-                                padding:15px;
-                                color:#15803d;
-                                font-weight:bold;
-                                ">
+                                    padding:15px;
+                                    color:#15803d;
+                                    font-weight:bold;
+                                "
+                            >
 
                                 Night Shift
 
                             </td>
 
+
                             <td style="padding:15px;">
                                 9:00 PM - 6:00 AM
                             </td>
 
+
                             <td
                                 style="
-                                padding:15px;
-                                color:#16a34a;
-                                font-weight:bold;
-                                ">
+                                    padding:15px;
+                                    color:#16a34a;
+                                    font-weight:bold;
+                                "
+                            >
 
                                 Working
 
@@ -366,31 +486,37 @@
                                 Karthik
                             </td>
 
+
                             <td style="padding:15px;">
                                 Associate
                             </td>
 
+
                             <td
                                 style="
-                                padding:15px;
-                                color:#dc2626;
-                                font-weight:bold;
-                                ">
+                                    padding:15px;
+                                    color:#dc2626;
+                                    font-weight:bold;
+                                "
+                            >
 
                                 Week Off
 
                             </td>
 
+
                             <td style="padding:15px;">
                                 -
                             </td>
 
+
                             <td
                                 style="
-                                padding:15px;
-                                color:#dc2626;
-                                font-weight:bold;
-                                ">
+                                    padding:15px;
+                                    color:#dc2626;
+                                    font-weight:bold;
+                                "
+                            >
 
                                 Off
 
@@ -408,31 +534,37 @@
                                 Divya
                             </td>
 
+
                             <td style="padding:15px;">
                                 Associate
                             </td>
 
+
                             <td
                                 style="
-                                padding:15px;
-                                color:#1d4ed8;
-                                font-weight:bold;
-                                ">
+                                    padding:15px;
+                                    color:#1d4ed8;
+                                    font-weight:bold;
+                                "
+                            >
 
                                 Day Shift
 
                             </td>
 
+
                             <td style="padding:15px;">
                                 9:00 AM - 6:00 PM
                             </td>
 
+
                             <td
                                 style="
-                                padding:15px;
-                                color:#16a34a;
-                                font-weight:bold;
-                                ">
+                                    padding:15px;
+                                    color:#16a34a;
+                                    font-weight:bold;
+                                "
+                            >
 
                                 Working
 
@@ -450,31 +582,37 @@
                                 Sanjay
                             </td>
 
+
                             <td style="padding:15px;">
                                 Associate
                             </td>
 
+
                             <td
                                 style="
-                                padding:15px;
-                                color:#15803d;
-                                font-weight:bold;
-                                ">
+                                    padding:15px;
+                                    color:#15803d;
+                                    font-weight:bold;
+                                "
+                            >
 
                                 Night Shift
 
                             </td>
 
+
                             <td style="padding:15px;">
                                 9:00 PM - 6:00 AM
                             </td>
 
+
                             <td
                                 style="
-                                padding:15px;
-                                color:#16a34a;
-                                font-weight:bold;
-                                ">
+                                    padding:15px;
+                                    color:#16a34a;
+                                    font-weight:bold;
+                                "
+                            >
 
                                 Working
 
@@ -498,7 +636,9 @@
 
         <section
             class="schedule-section"
-            style="margin-top:30px;">
+            style="margin-top:30px;"
+        >
+
 
             <div class="schedule-header">
 
@@ -507,6 +647,7 @@
                     <h2>
                         Shift Summary
                     </h2>
+
 
                     <p>
                         Today's workforce distribution
@@ -517,9 +658,14 @@
             </div>
 
 
-            <div class="summary-cards"
-                 style="margin-bottom:0;">
 
+            <div
+                class="summary-cards"
+                style="margin-bottom:0;"
+            >
+
+
+                <!-- Day -->
 
                 <div class="card">
 
@@ -527,10 +673,12 @@
                         ☀️ Day Shift
                     </h3>
 
+
                     <p
                         style="
-                        color:#2563eb;
-                        ">
+                            color:#2563eb;
+                        "
+                    >
 
                         10 Employees
 
@@ -539,16 +687,21 @@
                 </div>
 
 
+
+                <!-- Night -->
+
                 <div class="card">
 
                     <h3>
                         🌙 Night Shift
                     </h3>
 
+
                     <p
                         style="
-                        color:#15803d;
-                        ">
+                            color:#15803d;
+                        "
+                    >
 
                         8 Employees
 
@@ -557,16 +710,21 @@
                 </div>
 
 
+
+                <!-- Week Off -->
+
                 <div class="card">
 
                     <h3>
                         🔴 Week Off
                     </h3>
 
+
                     <p
                         style="
-                        color:#dc2626;
-                        ">
+                            color:#dc2626;
+                        "
+                    >
 
                         7 Employees
 
@@ -583,9 +741,6 @@
 
 
 
-   
-
-
     <!-- ================================
          MANAGER LOGOUT
     ================================= -->
@@ -596,7 +751,8 @@
 
             localStorage.clear();
 
-            window.location.href = "index.html";
+            window.location.href =
+                "index.html";
 
         }
 
