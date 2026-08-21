@@ -42,6 +42,7 @@
                     id="associateName"
                     placeholder="Enter employee name"
                     autocomplete="off"
+                    required
                 >
 
 
@@ -58,6 +59,7 @@
                     id="associateLoginId"
                     placeholder="Example: EMP002"
                     autocomplete="off"
+                    required
                 >
 
 
@@ -74,6 +76,7 @@
                     id="temporaryPassword"
                     placeholder="Enter temporary password"
                     autocomplete="new-password"
+                    required
                 >
 
 
@@ -90,6 +93,7 @@
                     id="confirmTemporaryPassword"
                     placeholder="Confirm temporary password"
                     autocomplete="new-password"
+                    required
                 >
 
 
@@ -97,12 +101,17 @@
                      CREATE BUTTON
                 =============================== -->
 
-                <button type="submit">
+                <button type="submit" id="createButton">
                     Create Associate Account
                 </button>
 
 
+                <!-- ==============================
+                     MESSAGE
+                =============================== -->
+
                 <p id="createMessage"></p>
+
 
             </form>
 
@@ -117,9 +126,26 @@
 
     <script>
 
+
+        // ==========================================
+        // CREATE ASSOCIATE ACCOUNT
+        // ==========================================
+
         const createForm =
             document.getElementById(
                 "createAssociateForm"
+            );
+
+
+        const createButton =
+            document.getElementById(
+                "createButton"
+            );
+
+
+        const message =
+            document.getElementById(
+                "createMessage"
             );
 
 
@@ -130,39 +156,43 @@
                 event.preventDefault();
 
 
+                // ======================================
+                // GET FORM VALUES
+                // ======================================
+
                 const name =
                     document.getElementById(
                         "associateName"
-                    ).value.trim();
+                    )
+                    .value
+                    .trim();
 
 
                 const loginId =
                     document.getElementById(
                         "associateLoginId"
-                    ).value.trim();
+                    )
+                    .value
+                    .trim();
 
 
                 const temporaryPassword =
                     document.getElementById(
                         "temporaryPassword"
-                    ).value;
+                    )
+                    .value;
 
 
                 const confirmPassword =
                     document.getElementById(
                         "confirmTemporaryPassword"
-                    ).value;
+                    )
+                    .value;
 
 
-                const message =
-                    document.getElementById(
-                        "createMessage"
-                    );
-
-
-                // ==============================
+                // ======================================
                 // EMPTY VALIDATION
-                // ==============================
+                // ======================================
 
                 if (
                     !name ||
@@ -174,15 +204,16 @@
                     message.textContent =
                         "Please fill all the fields.";
 
-                    message.style.color = "red";
+                    message.style.color =
+                        "red";
 
                     return;
                 }
 
 
-                // ==============================
+                // ======================================
                 // PASSWORD MATCH
-                // ==============================
+                // ======================================
 
                 if (
                     temporaryPassword !==
@@ -192,21 +223,52 @@
                     message.textContent =
                         "Passwords do not match.";
 
-                    message.style.color = "red";
+                    message.style.color =
+                        "red";
 
                     return;
                 }
 
 
-                // ==============================
-                // CREATE ACCOUNT
-                // ==============================
+                // ======================================
+                // PASSWORD LENGTH
+                // ======================================
+
+                if (
+                    temporaryPassword.length < 8
+                ) {
+
+                    message.textContent =
+                        "Temporary password must be at least 8 characters.";
+
+                    message.style.color =
+                        "red";
+
+                    return;
+                }
+
+
+                // ======================================
+                // SHOW LOADING
+                // ======================================
 
                 message.textContent =
                     "Creating account...";
 
-                message.style.color = "blue";
+                message.style.color =
+                    "blue";
 
+
+                createButton.disabled =
+                    true;
+
+                createButton.textContent =
+                    "Creating...";
+
+
+                // ======================================
+                // CONNECT TO BACKEND
+                // ======================================
 
                 try {
 
@@ -238,13 +300,17 @@
                         );
 
 
+                    // ==================================
+                    // GET SERVER RESPONSE
+                    // ==================================
+
                     const data =
                         await response.json();
 
 
-                    // ==============================
-                    // ERROR
-                    // ==============================
+                    // ==================================
+                    // ACCOUNT CREATION FAILED
+                    // ==================================
 
                     if (
                         !response.ok ||
@@ -255,35 +321,80 @@
                             data.message ||
                             "Account creation failed.";
 
-                        message.style.color = "red";
+                        message.style.color =
+                            "red";
+
+
+                        createButton.disabled =
+                            false;
+
+                        createButton.textContent =
+                            "Create Associate Account";
 
                         return;
                     }
 
 
-                    // ==============================
-                    // SUCCESS
-                    // ==============================
+                    // ==================================
+                    // ACCOUNT CREATED SUCCESSFULLY
+                    // ==================================
 
                     message.textContent =
                         "Associate account created successfully!";
 
-                    message.style.color = "green";
+                    message.style.color =
+                        "green";
 
+
+                    // ==================================
+                    // CLEAR FORM
+                    // ==================================
 
                     createForm.reset();
+
+
+                    // ==================================
+                    // GO TO MANAGER DASHBOARD
+                    // ==================================
+
+                    setTimeout(
+                        function () {
+
+                            window.location.href =
+                                "manager-dashboard.html";
+
+                        },
+                        2000
+                    );
+
 
                 }
 
 
+                // ======================================
+                // CONNECTION ERROR
+                // ======================================
+
                 catch (error) {
 
-                    console.error(error);
+                    console.error(
+                        "Create associate error:",
+                        error
+                    );
+
 
                     message.textContent =
                         "Cannot connect to server.";
 
-                    message.style.color = "red";
+                    message.style.color =
+                        "red";
+
+
+                    createButton.disabled =
+                        false;
+
+                    createButton.textContent =
+                        "Create Associate Account";
 
                 }
 
