@@ -4,29 +4,10 @@
 
 
 // ======================================================
-// PROTECTED PAGES
+// FORCE LOGIN PAGE AFTER LOGOUT
 // ======================================================
 
-const protectedPages = [
-
-    "dashboard.html",
-    "my-schedule.html",
-    "profile.html",
-
-    "manager-dashboard.html",
-    "employees.html",
-    "employee-details.html",
-    "schedule2.html",
-    "manager-profile.html"
-
-];
-
-
-// ======================================================
-// CHECK LOGIN STATUS
-// ======================================================
-
-function isLoggedIn() {
+function forceLoginPage() {
 
     const user =
         localStorage.getItem("userName");
@@ -34,69 +15,22 @@ function isLoggedIn() {
     const role =
         localStorage.getItem("userRole");
 
-    return (
-        user &&
-        role
-    );
-}
 
+    // If user is logged out
+    if (!user || !role) {
 
-// ======================================================
-// CURRENT PAGE
-// ======================================================
+        // Replace current history entry
+        window.history.replaceState(
+            null,
+            "",
+            "index.html"
+        );
 
-function getCurrentPage() {
-
-    return window.location.pathname
-        .split("/")
-        .pop();
-
-}
-
-
-// ======================================================
-// FORCE LOGIN PAGE
-// ======================================================
-
-function forceLoginPage() {
-
-    // Clear login data
-
-    localStorage.removeItem(
-        "userName"
-    );
-
-    localStorage.removeItem(
-        "userRole"
-    );
-
-    localStorage.removeItem(
-        "loginId"
-    );
-
-
-    // Mark logged out
-
-    sessionStorage.setItem(
-        "loggedOut",
-        "true"
-    );
-
-
-    // Replace current history
-
-    window.history.replaceState(
-        null,
-        "",
-        "index.html"
-    );
-
-
-    // Go to login page
-
-    window.location.replace(
-        "index.html"
-    );
+        // Go to login page
+        window.location.replace(
+            "index.html"
+        );
+    }
 }
 
 
@@ -107,24 +41,16 @@ function forceLoginPage() {
 function logoutUser() {
 
     // ----------------------------------------------
-    // CLEAR LOGIN SESSION
+    // CLEAR ALL LOGIN DATA
     // ----------------------------------------------
 
-    localStorage.removeItem(
-        "userName"
-    );
-
-    localStorage.removeItem(
-        "userRole"
-    );
-
-    localStorage.removeItem(
-        "loginId"
-    );
+    localStorage.removeItem("userName");
+    localStorage.removeItem("userRole");
+    localStorage.removeItem("loginId");
 
 
     // ----------------------------------------------
-    // MARK USER AS LOGGED OUT
+    // PREVENT OLD PAGE FROM BEING RESTORED
     // ----------------------------------------------
 
     sessionStorage.setItem(
@@ -134,7 +60,7 @@ function logoutUser() {
 
 
     // ----------------------------------------------
-    // REMOVE OLD HISTORY ENTRY
+    // REPLACE HISTORY
     // ----------------------------------------------
 
     window.history.replaceState(
@@ -163,9 +89,7 @@ document.addEventListener(
     function () {
 
         const logoutButton =
-            document.querySelector(
-                ".logout-btn"
-            );
+            document.querySelector(".logout-btn");
 
 
         if (logoutButton) {
@@ -176,13 +100,10 @@ document.addEventListener(
 
                     event.preventDefault();
 
-                    event.stopPropagation();
-
                     logoutUser();
 
                 }
             );
-
         }
 
     }
@@ -190,96 +111,78 @@ document.addEventListener(
 
 
 // ======================================================
-// PAGE ACCESS CHECK
-// ======================================================
-
-function checkProtectedPage() {
-
-    const currentPage =
-        getCurrentPage();
-
-
-    const loggedIn =
-        isLoggedIn();
-
-
-    // ----------------------------------------------
-    // PROTECTED PAGE WITHOUT LOGIN
-    // ----------------------------------------------
-
-    if (
-        protectedPages.includes(
-            currentPage
-        ) &&
-        !loggedIn
-    ) {
-
-        forceLoginPage();
-
-        return false;
-    }
-
-
-    return true;
-}
-
-
-// ======================================================
-// RUN PAGE CHECK IMMEDIATELY
-// ======================================================
-
-checkProtectedPage();
-
-
-// ======================================================
-// MOBILE / BROWSER PAGESHOW
+// BACK BUTTON PROTECTION
 // ======================================================
 
 window.addEventListener(
     "pageshow",
     function (event) {
 
+        const user =
+            localStorage.getItem("userName");
+
+        const role =
+            localStorage.getItem("userRole");
+
+
         const currentPage =
-            getCurrentPage();
+            window.location.pathname
+                .split("/")
+                .pop();
 
 
-        const loggedIn =
-            isLoggedIn();
+        const protectedPages = [
+
+            "dashboard.html",
+            "my-schedule.html",
+            "profile.html",
+
+            "manager-dashboard.html",
+            "employees.html",
+            "employee-details.html",
+            "schedule2.html",
+            "manager-profile.html"
+
+        ];
 
 
         // ------------------------------------------
-        // DASHBOARD RESTORED FROM CACHE
-        // AFTER LOGOUT
+        // USER IS LOGGED OUT
         // ------------------------------------------
 
         if (
-            protectedPages.includes(
-                currentPage
-            ) &&
-            !loggedIn
+            protectedPages.includes(currentPage) &&
+            (!user || !role)
         ) {
 
-            forceLoginPage();
+            window.history.replaceState(
+                null,
+                "",
+                "index.html"
+            );
+
+
+            window.location.replace(
+                "index.html"
+            );
 
             return;
         }
 
 
         // ------------------------------------------
-        // BFCACHE RESTORED PAGE
+        // BROWSER RESTORED CACHED PAGE
         // ------------------------------------------
 
         if (
             event.persisted &&
-            protectedPages.includes(
-                currentPage
-            ) &&
-            !loggedIn
+            protectedPages.includes(currentPage) &&
+            (!user || !role)
         ) {
 
-            forceLoginPage();
-
-            return;
+            window.location.replace(
+                "index.html"
+            );
         }
 
     }
@@ -287,35 +190,53 @@ window.addEventListener(
 
 
 // ======================================================
-// MOBILE BACK BUTTON
+// BROWSER BACK BUTTON
 // ======================================================
 
 window.addEventListener(
     "popstate",
     function () {
 
+        const user =
+            localStorage.getItem("userName");
+
+        const role =
+            localStorage.getItem("userRole");
+
+
         const currentPage =
-            getCurrentPage();
+            window.location.pathname
+                .split("/")
+                .pop();
 
 
-        const loggedIn =
-            isLoggedIn();
+        const protectedPages = [
+
+            "dashboard.html",
+            "my-schedule.html",
+            "profile.html",
+
+            "manager-dashboard.html",
+            "employees.html",
+            "employee-details.html",
+            "schedule2.html",
+            "manager-profile.html"
+
+        ];
 
 
         // ------------------------------------------
-        // LOGGED OUT USER
+        // NO LOGIN = NEVER ALLOW PROTECTED PAGE
         // ------------------------------------------
 
         if (
-            protectedPages.includes(
-                currentPage
-            ) &&
-            !loggedIn
+            protectedPages.includes(currentPage) &&
+            (!user || !role)
         ) {
 
-            forceLoginPage();
-
-            return;
+            window.location.replace(
+                "index.html"
+            );
         }
 
     }
@@ -323,72 +244,21 @@ window.addEventListener(
 
 
 // ======================================================
-// PAGE VISIBILITY CHECK
+// LOGIN PAGE - CLEAR OLD LOGOUT STATE
 // ======================================================
 
-document.addEventListener(
-    "visibilitychange",
-    function () {
+if (isLoginPage) {
 
-        if (
-            document.visibilityState ===
-            "visible"
-        ) {
+    sessionStorage.removeItem(
+        "loggedOut"
+    );
 
-            checkProtectedPage();
+    // Prevent browser from keeping an old
+    // login page snapshot
 
-        }
-
-    }
-);
-
-
-// ======================================================
-// LOGIN PAGE PROTECTION
-// ======================================================
-
-const currentPageName =
-    getCurrentPage();
-
-
-const isLoginPageNow =
-    currentPageName ===
-        "index.html" ||
-    currentPageName === "";
-
-
-// ======================================================
-// LOGIN PAGE HISTORY CONTROL
-// ======================================================
-
-if (isLoginPageNow) {
-
-    // ----------------------------------------------
-    // USER IS LOGGED OUT
-    // ----------------------------------------------
-
-    if (!isLoggedIn()) {
-
-        window.history.replaceState(
-            null,
-            "",
-            "index.html"
-        );
-
-    }
-
+    window.history.replaceState(
+        null,
+        "",
+        "index.html"
+    );
 }
-
-
-// ======================================================
-// PREVENT OLD DASHBOARD FROM BEING RESTORED
-// ======================================================
-
-window.addEventListener(
-    "beforepageshow",
-    function () {
-
-        checkProtectedPage();
-
-    }
-);
