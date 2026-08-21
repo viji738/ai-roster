@@ -2,7 +2,7 @@
 // AI AUTOMATIC ROSTER SYSTEM
 // BACKEND LOGIN + LOGOUT + ROLE PROTECTION
 // PROFILE + CALENDAR + CHANGE PASSWORD
-// MOBILE LOGIN FIX
+// MOBILE LOGIN + LOGOUT FIX
 // ======================================================
 
 
@@ -16,33 +16,23 @@ const currentPage =
 
 // ======================================================
 // LOGIN STATUS FUNCTIONS
-// LOCAL STORAGE + SESSION STORAGE BACKUP
 // ======================================================
 
 function getLoggedInUser() {
 
-    return (
-        localStorage.getItem("userName") ||
-        sessionStorage.getItem("userName")
-    );
+    return localStorage.getItem("userName");
 }
 
 
 function getLoggedInRole() {
 
-    return (
-        localStorage.getItem("userRole") ||
-        sessionStorage.getItem("userRole")
-    );
+    return localStorage.getItem("userRole");
 }
 
 
 function getLoggedInId() {
 
-    return (
-        localStorage.getItem("loginId") ||
-        sessionStorage.getItem("loginId")
-    );
+    return localStorage.getItem("loginId");
 }
 
 
@@ -56,7 +46,7 @@ const isLoginPage =
 
 
 // ======================================================
-// PAGE ACCESS CONTROL
+// PROTECTED PAGES
 // ======================================================
 
 const associatePages = [
@@ -79,8 +69,53 @@ const managerPages = [
 ];
 
 
+const protectedPages = [
+
+    "dashboard.html",
+    "my-schedule.html",
+    "profile.html",
+
+    "manager-dashboard.html",
+    "employees.html",
+    "employee-details.html",
+    "schedule2.html",
+    "manager-profile.html"
+
+];
+
+
 // ======================================================
-// PAGE PROTECTION
+// REDIRECT USER TO CORRECT DASHBOARD
+// ======================================================
+
+function redirectToDashboard(role) {
+
+    if (role === "Associate") {
+
+        window.location.replace(
+            "dashboard.html"
+        );
+
+        return true;
+    }
+
+
+    if (role === "Manager") {
+
+        window.location.replace(
+            "manager-dashboard.html"
+        );
+
+        return true;
+    }
+
+
+    return false;
+}
+
+
+// ======================================================
+// PAGE ACCESS CONTROL
 // ======================================================
 
 function checkPageAccess() {
@@ -92,43 +127,46 @@ function checkPageAccess() {
         getLoggedInRole();
 
 
+    const loggedOut =
+        sessionStorage.getItem(
+            "loggedOut"
+        );
+
+
     // ==================================================
     // LOGIN PAGE
     // ==================================================
 
     if (isLoginPage) {
 
-        // If already logged in,
-        // don't allow mobile browser to stay on login page
+        // ----------------------------------------------
+        // IMPORTANT:
+        // If logout just happened, NEVER redirect back
+        // to dashboard.
+        // ----------------------------------------------
+
+        if (loggedOut === "true") {
+
+            return;
+        }
+
+
+        // ----------------------------------------------
+        // Already logged in
+        // ----------------------------------------------
 
         if (
             user &&
             role
         ) {
 
-            if (
-                role === "Associate"
-            ) {
+            redirectToDashboard(
+                role
+            );
 
-                window.location.replace(
-                    "dashboard.html"
-                );
-
-                return;
-            }
-
-
-            if (
-                role === "Manager"
-            ) {
-
-                window.location.replace(
-                    "manager-dashboard.html"
-                );
-
-                return;
-            }
+            return;
         }
+
 
         return;
     }
@@ -156,7 +194,9 @@ function checkPageAccess() {
     // ==================================================
 
     if (
-        associatePages.includes(currentPage) &&
+        associatePages.includes(
+            currentPage
+        ) &&
         role !== "Associate"
     ) {
 
@@ -173,7 +213,9 @@ function checkPageAccess() {
     // ==================================================
 
     if (
-        managerPages.includes(currentPage) &&
+        managerPages.includes(
+            currentPage
+        ) &&
         role !== "Manager"
     ) {
 
@@ -198,6 +240,11 @@ checkPageAccess();
 // ======================================================
 
 function logoutUser() {
+
+    console.log(
+        "LOGOUT STARTED"
+    );
+
 
     // ==================================================
     // CLEAR LOCAL STORAGE
@@ -233,6 +280,10 @@ function logoutUser() {
     );
 
 
+    // ==================================================
+    // SET LOGGED OUT FLAG
+    // ==================================================
+
     sessionStorage.setItem(
         "loggedOut",
         "true"
@@ -240,7 +291,7 @@ function logoutUser() {
 
 
     // ==================================================
-    // CLEAR LOGIN FIELDS
+    // CLEAR LOGIN FORM
     // ==================================================
 
     const nameInput =
@@ -270,33 +321,29 @@ function logoutUser() {
     if (nameInput) {
 
         nameInput.value = "";
-
     }
 
 
     if (loginIdInput) {
 
         loginIdInput.value = "";
-
     }
 
 
     if (passwordInput) {
 
         passwordInput.value = "";
-
     }
 
 
     if (roleInput) {
 
         roleInput.value = "";
-
     }
 
 
     // ==================================================
-    // FORCE LOGIN PAGE
+    // REMOVE CURRENT PAGE FROM HISTORY
     // ==================================================
 
     window.history.replaceState(
@@ -305,6 +352,10 @@ function logoutUser() {
         "index.html"
     );
 
+
+    // ==================================================
+    // FORCE LOGIN PAGE
+    // ==================================================
 
     window.location.replace(
         "index.html"
@@ -316,36 +367,39 @@ function logoutUser() {
 // LOGOUT BUTTON
 // ======================================================
 
+// Use delegated click.
+// This works better on mobile and also works if the
+// logout button is created later.
+
 document.addEventListener(
-    "DOMContentLoaded",
-    function () {
+    "click",
+    function (event) {
 
         const logoutButton =
-            document.querySelector(
+            event.target.closest(
                 ".logout-btn"
             );
 
 
-        if (logoutButton) {
+        if (!logoutButton) {
 
-            logoutButton.addEventListener(
-                "click",
-                function (event) {
-
-                    event.preventDefault();
-
-                    logoutUser();
-
-                }
-            );
+            return;
         }
+
+
+        event.preventDefault();
+
+        event.stopPropagation();
+
+
+        logoutUser();
 
     }
 );
 
 
 // ======================================================
-// LOGIN - BACKEND API
+// LOGIN FORM
 // ======================================================
 
 const loginForm =
@@ -530,7 +584,7 @@ if (loginForm) {
 
 
                 // ======================================
-                // LOGIN SUCCESS
+                // GET USER DATA
                 // ======================================
 
                 const loggedUser =
@@ -574,7 +628,16 @@ if (loginForm) {
 
 
                 // ======================================
-                // SAVE SESSION STORAGE BACKUP
+                // CLEAR LOGOUT FLAG
+                // ======================================
+
+                sessionStorage.removeItem(
+                    "loggedOut"
+                );
+
+
+                // ======================================
+                // SAVE SESSION STORAGE
                 // ======================================
 
                 sessionStorage.setItem(
@@ -592,13 +655,6 @@ if (loginForm) {
                 sessionStorage.setItem(
                     "loginId",
                     loggedLoginId
-                );
-
-
-                // Remove old logout flag
-
-                sessionStorage.removeItem(
-                    "loggedOut"
                 );
 
 
@@ -653,7 +709,7 @@ if (loginForm) {
 
 
                 // ======================================
-                // LOGIN SUCCESS MESSAGE
+                // SUCCESS MESSAGE
                 // ======================================
 
                 message.textContent =
@@ -665,55 +721,17 @@ if (loginForm) {
 
                 // ======================================
                 // ROLE BASED REDIRECT
-                // MOBILE SAFE
                 // ======================================
 
                 setTimeout(
                     function () {
 
-                        if (
-                            savedRole ===
-                            "Associate"
-                        ) {
-
-                            console.log(
-                                "Redirecting to Associate Dashboard"
-                            );
-
-
-                            window.location.replace(
-                                "dashboard.html"
-                            );
-
-                        }
-
-                        else if (
-                            savedRole ===
-                            "Manager"
-                        ) {
-
-                            console.log(
-                                "Redirecting to Manager Dashboard"
-                            );
-
-
-                            window.location.replace(
-                                "manager-dashboard.html"
-                            );
-
-                        }
-
-                        else {
-
-                            message.textContent =
-                                "Invalid user role.";
-
-                            message.style.color =
-                                "red";
-                        }
+                        redirectToDashboard(
+                            savedRole
+                        );
 
                     },
-                    500
+                    300
                 );
 
             }
@@ -759,19 +777,10 @@ window.addEventListener(
             getLoggedInRole();
 
 
-        const protectedPages = [
-
-            "dashboard.html",
-            "my-schedule.html",
-            "profile.html",
-
-            "manager-dashboard.html",
-            "employees.html",
-            "employee-details.html",
-            "schedule2.html",
-            "manager-profile.html"
-
-        ];
+        const loggedOut =
+            sessionStorage.getItem(
+                "loggedOut"
+            );
 
 
         const page =
@@ -781,7 +790,48 @@ window.addEventListener(
 
 
         // ==================================================
-        // CACHED PROTECTED PAGE WITHOUT LOGIN
+        // LOGOUT PAGE
+        // ==================================================
+
+        if (
+            isLoginPage &&
+            loggedOut === "true"
+        ) {
+
+            // Make sure old login values are gone
+
+            localStorage.removeItem(
+                "userName"
+            );
+
+            localStorage.removeItem(
+                "userRole"
+            );
+
+            localStorage.removeItem(
+                "loginId"
+            );
+
+
+            sessionStorage.removeItem(
+                "userName"
+            );
+
+            sessionStorage.removeItem(
+                "userRole"
+            );
+
+            sessionStorage.removeItem(
+                "loginId"
+            );
+
+
+            return;
+        }
+
+
+        // ==================================================
+        // PROTECTED PAGE WITHOUT LOGIN
         // ==================================================
 
         if (
@@ -805,7 +855,7 @@ window.addEventListener(
 
 
         // ==================================================
-        // BROWSER CACHE / MOBILE BACK BUTTON
+        // BROWSER CACHE / BF CACHE
         // ==================================================
 
         if (
@@ -817,6 +867,8 @@ window.addEventListener(
             window.location.replace(
                 "index.html"
             );
+
+            return;
         }
 
     }
@@ -839,26 +891,15 @@ window.addEventListener(
             getLoggedInRole();
 
 
-        const protectedPages = [
-
-            "dashboard.html",
-            "my-schedule.html",
-            "profile.html",
-
-            "manager-dashboard.html",
-            "employees.html",
-            "employee-details.html",
-            "schedule2.html",
-            "manager-profile.html"
-
-        ];
-
-
         const page =
             window.location.pathname
                 .split("/")
                 .pop();
 
+
+        // ==================================================
+        // PROTECTED PAGE WITHOUT LOGIN
+        // ==================================================
 
         if (
             protectedPages.includes(page) &&
@@ -868,6 +909,71 @@ window.addEventListener(
             window.location.replace(
                 "index.html"
             );
+
+            return;
+        }
+
+
+        // ==================================================
+        // LOGIN PAGE + VALID SESSION
+        // ==================================================
+
+        if (
+            isLoginPage &&
+            user &&
+            role
+        ) {
+
+            redirectToDashboard(
+                role
+            );
+
+        }
+
+    }
+);
+
+
+// ======================================================
+// LOGIN PAGE LOAD PROTECTION
+// ======================================================
+
+window.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        if (!isLoginPage) {
+
+            return;
+        }
+
+
+        const loggedOut =
+            sessionStorage.getItem(
+                "loggedOut"
+            );
+
+
+        // If logout happened,
+        // keep user on login page.
+
+        if (
+            loggedOut === "true"
+        ) {
+
+            const loginForm =
+                document.getElementById(
+                    "loginForm"
+                );
+
+
+            if (loginForm) {
+
+                loginForm.reset();
+
+            }
+
+            return;
         }
 
     }
@@ -970,10 +1076,6 @@ const savedLoginId =
     getLoggedInId();
 
 
-// ======================================================
-// PROFILE NAME
-// ======================================================
-
 if (
     profileNameElement &&
     savedName
@@ -983,10 +1085,6 @@ if (
         savedName;
 }
 
-
-// ======================================================
-// FULL NAME
-// ======================================================
 
 if (
     profileFullNameElement &&
@@ -998,10 +1096,6 @@ if (
 }
 
 
-// ======================================================
-// LOGIN ID
-// ======================================================
-
 if (
     profileLoginIdElement &&
     savedLoginId
@@ -1011,10 +1105,6 @@ if (
         savedLoginId;
 }
 
-
-// ======================================================
-// PROFILE ROLE
-// ======================================================
 
 if (
     profileRoleElement &&
@@ -1026,10 +1116,6 @@ if (
 }
 
 
-// ======================================================
-// ROLE INFORMATION
-// ======================================================
-
 if (
     profileRoleInfoElement &&
     savedRole
@@ -1039,10 +1125,6 @@ if (
         savedRole;
 }
 
-
-// ======================================================
-// PROFILE INITIAL
-// ======================================================
 
 if (
     profileInitialElement &&
