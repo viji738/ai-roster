@@ -1,7 +1,6 @@
-```javascript
 // ======================================================
 // AI AUTOMATIC ROSTER SYSTEM
-// BACKEND LOGIN + LOGOUT + ROLE PROTECTION
+// LOGIN + LOGOUT + ROLE PROTECTION
 // PROFILE + CALENDAR + CHANGE PASSWORD
 // MOBILE BACK BUTTON PROTECTION
 // ======================================================
@@ -12,18 +11,24 @@
 // ======================================================
 
 const currentPage =
-    window.location.pathname.split("/").pop();
+    window.location.pathname.split("/").pop() || "index.html";
 
 
 // ======================================================
 // LOGIN STATUS
 // ======================================================
 
-const loggedInUser =
-    localStorage.getItem("userName");
+function getLoggedInUser() {
+    return localStorage.getItem("userName");
+}
 
-const loggedInRole =
-    localStorage.getItem("userRole");
+function getLoggedInRole() {
+    return localStorage.getItem("userRole");
+}
+
+function getLoginId() {
+    return localStorage.getItem("loginId");
+}
 
 
 // ======================================================
@@ -36,7 +41,7 @@ const isLoginPage =
 
 
 // ======================================================
-// PAGE ACCESS CONTROL
+// PAGE LISTS
 // ======================================================
 
 const associatePages = [
@@ -50,166 +55,105 @@ const managerPages = [
     "employees.html",
     "employee-details.html",
     "schedule2.html",
-    "manager-profile.html"
+    "manager-profile.html",
+    "create-associate.html"
+];
+
+const protectedPages = [
+    ...associatePages,
+    ...managerPages
 ];
 
 
 // ======================================================
-// LOGIN PROTECTION
+// NORMALIZE ROLE
 // ======================================================
 
-if (
-    !isLoginPage &&
-    (!loggedInUser || !loggedInRole)
-) {
+function normalizeRole(role) {
 
-    window.location.replace("index.html");
+    if (!role) {
+        return "";
+    }
+
+    return role
+        .toString()
+        .trim()
+        .toLowerCase();
+
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // ======================================================
-// MOBILE BACK BUTTON / BFCACHE PROTECTION
+// PAGE ACCESS PROTECTION
 // ======================================================
 
-window.addEventListener("pageshow", function (event) {
+function checkPageAccess() {
 
-    const currentPage =
-        window.location.pathname.split("/").pop();
+    const user =
+        getLoggedInUser();
 
-    const loggedInUser =
-        localStorage.getItem("userName");
-
-    const loggedInRole =
-        localStorage.getItem("userRole");
+    const role =
+        normalizeRole(
+            getLoggedInRole()
+        );
 
 
     // ------------------------------------------
-    // IF USER IS NOT LOGGED IN
+    // NOT LOGGED IN
     // ------------------------------------------
 
     if (
-        !loggedInUser ||
-        !loggedInRole
+        protectedPages.includes(currentPage) &&
+        (!user || !role)
     ) {
 
-        const protectedPages = [
-            "dashboard.html",
-            "my-schedule.html",
-            "profile.html",
-            "manager-dashboard.html",
-            "employees.html",
-            "employee-details.html",
-            "schedule2.html",
-            "manager-profile.html"
-        ];
+        window.location.replace(
+            "index.html"
+        );
 
-
-        // If old dashboard is restored from browser cache
-        if (
-            protectedPages.includes(currentPage)
-        ) {
-
-            window.location.replace(
-                "index.html"
-            );
-
-        }
-
+        return;
     }
 
-});
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// ======================================================
-// ROLE PROTECTION
-// ======================================================
-
-if (
-    loggedInUser &&
-    loggedInRole &&
-    !isLoginPage
-) {
-
-    // Associate pages
+    // ------------------------------------------
+    // ASSOCIATE PAGE
+    // ------------------------------------------
 
     if (
         associatePages.includes(currentPage) &&
-        loggedInRole !== "Associate"
+        role !== "associate"
     ) {
 
-        window.location.replace("index.html");
+        window.location.replace(
+            "index.html"
+        );
+
+        return;
     }
 
 
-    // Manager pages
+    // ------------------------------------------
+    // MANAGER PAGE
+    // ------------------------------------------
 
     if (
         managerPages.includes(currentPage) &&
-        loggedInRole !== "Manager"
+        role !== "manager"
     ) {
 
-        window.location.replace("index.html");
+        window.location.replace(
+            "index.html"
+        );
+
+        return;
     }
+
 }
+
+
+// Run protection
+
+checkPageAccess();
 
 
 // ======================================================
@@ -218,14 +162,22 @@ if (
 
 function logoutUser() {
 
-    // Clear login session
+    // Clear session
 
-    localStorage.removeItem("userName");
-    localStorage.removeItem("userRole");
-    localStorage.removeItem("loginId");
+    localStorage.removeItem(
+        "userName"
+    );
+
+    localStorage.removeItem(
+        "userRole"
+    );
+
+    localStorage.removeItem(
+        "loginId"
+    );
 
 
-    // Clear login form fields
+    // Clear login fields if available
 
     const nameInput =
         document.getElementById("name");
@@ -241,32 +193,27 @@ function logoutUser() {
 
 
     if (nameInput) {
-
         nameInput.value = "";
     }
 
-
     if (loginIdInput) {
-
         loginIdInput.value = "";
     }
 
-
     if (passwordInput) {
-
         passwordInput.value = "";
     }
 
-
     if (roleInput) {
-
         roleInput.value = "";
     }
 
 
     // Go to login page
 
-    window.location.replace("index.html");
+    window.location.replace(
+        "index.html"
+    );
 }
 
 
@@ -275,28 +222,35 @@ function logoutUser() {
 // ======================================================
 
 const logoutButton =
-    document.querySelector(".logout-btn");
+    document.querySelector(
+        ".logout-btn"
+    );
 
 
 if (logoutButton) {
 
     logoutButton.addEventListener(
         "click",
-        function () {
+        function (event) {
+
+            event.preventDefault();
 
             logoutUser();
 
         }
     );
+
 }
 
 
 // ======================================================
-// LOGIN - BACKEND API
+// LOGIN FORM
 // ======================================================
 
 const loginForm =
-    document.getElementById("loginForm");
+    document.getElementById(
+        "loginForm"
+    );
 
 
 if (loginForm) {
@@ -309,34 +263,37 @@ if (loginForm) {
 
 
             // ==========================================
-            // GET VALUES
+            // GET INPUT VALUES
             // ==========================================
 
             const name =
-                document.getElementById("name")
-                    .value
-                    .trim();
+                document.getElementById(
+                    "name"
+                ).value.trim();
 
 
             const loginId =
-                document.getElementById("loginId")
-                    .value
-                    .trim();
+                document.getElementById(
+                    "loginId"
+                ).value.trim();
 
 
             const password =
-                document.getElementById("password")
-                    .value
-                    .trim();
+                document.getElementById(
+                    "password"
+                ).value.trim();
 
 
             const role =
-                document.getElementById("role")
-                    .value;
+                document.getElementById(
+                    "role"
+                ).value.trim();
 
 
             const message =
-                document.getElementById("message");
+                document.getElementById(
+                    "message"
+                );
 
 
             // ==========================================
@@ -344,31 +301,38 @@ if (loginForm) {
             // ==========================================
 
             if (
-                name === "" ||
-                loginId === "" ||
-                password === "" ||
-                role === ""
+                !name ||
+                !loginId ||
+                !password ||
+                !role
             ) {
 
-                message.textContent =
-                    "Please fill all the fields.";
+                if (message) {
 
-                message.style.color =
-                    "red";
+                    message.textContent =
+                        "Please fill all the fields.";
+
+                    message.style.color =
+                        "red";
+
+                }
 
                 return;
             }
 
 
             // ==========================================
-            // CHECK BACKEND
+            // LOGIN START
             // ==========================================
 
-            message.textContent =
-                "Checking login...";
+            if (message) {
 
-            message.style.color =
-                "blue";
+                message.textContent =
+                    "Checking login...";
+
+                message.style.color =
+                    "blue";
+            }
 
 
             try {
@@ -377,6 +341,10 @@ if (loginForm) {
                     "LOGIN REQUEST STARTED"
                 );
 
+
+                // ======================================
+                // BACKEND LOGIN
+                // ======================================
 
                 const response =
                     await fetch(
@@ -410,11 +378,17 @@ if (loginForm) {
 
 
                 // ======================================
-                // SERVER RESPONSE
+                // READ RESPONSE
                 // ======================================
 
                 const data =
                     await response.json();
+
+
+                console.log(
+                    "LOGIN RESPONSE:",
+                    data
+                );
 
 
                 // ======================================
@@ -423,105 +397,176 @@ if (loginForm) {
 
                 if (
                     !response.ok ||
-                    !data.success
+                    !data.success ||
+                    !data.user
                 ) {
 
-                    message.textContent =
-                        data.message ||
-                        "Login failed.";
+                    if (message) {
 
-                    message.style.color =
-                        "red";
+                        message.textContent =
+                            data.message ||
+                            "Invalid login details.";
+
+                        message.style.color =
+                            "red";
+                    }
 
                     return;
                 }
 
 
                 // ======================================
-                // LOGIN SUCCESS
+                // GET USER DATA
+                // ======================================
+
+                const userName =
+                    data.user.name;
+
+                const userLoginId =
+                    data.user.loginId;
+
+                const userRole =
+                    data.user.role;
+
+
+                const normalizedRole =
+                    normalizeRole(
+                        userRole
+                    );
+
+
+                console.log(
+                    "USER ROLE:",
+                    userRole
+                );
+
+                console.log(
+                    "NORMALIZED ROLE:",
+                    normalizedRole
+                );
+
+
+                // ======================================
+                // CHECK VALID ROLE
+                // ======================================
+
+                if (
+                    normalizedRole !== "associate" &&
+                    normalizedRole !== "manager"
+                ) {
+
+                    if (message) {
+
+                        message.textContent =
+                            "Invalid user role received from server.";
+
+                        message.style.color =
+                            "red";
+                    }
+
+                    return;
+                }
+
+
+                // ======================================
+                // SAVE LOGIN SESSION
                 // ======================================
 
                 localStorage.setItem(
                     "userName",
-                    data.user.name
+                    userName
                 );
-
 
                 localStorage.setItem(
                     "userRole",
-                    data.user.role
+                    userRole
                 );
-
 
                 localStorage.setItem(
                     "loginId",
-                    data.user.loginId
+                    userLoginId
                 );
 
 
-                message.textContent =
-                    "Login successful!";
+                // ======================================
+                // SUCCESS MESSAGE
+                // ======================================
 
-                message.style.color =
-                    "green";
+                if (message) {
+
+                    message.textContent =
+                        "Login successful!";
+
+                    message.style.color =
+                        "green";
+                }
 
 
                 // ======================================
-                // ROLE BASED REDIRECT
+                // REDIRECT
                 // ======================================
 
                 setTimeout(
                     function () {
 
                         if (
-                            data.user.role ===
-                            "Associate"
+                            normalizedRole ===
+                            "associate"
                         ) {
 
                             window.location.replace(
                                 "dashboard.html"
                             );
 
+                            return;
                         }
 
-                        else if (
-                            data.user.role ===
-                            "Manager"
+
+                        if (
+                            normalizedRole ===
+                            "manager"
                         ) {
 
                             window.location.replace(
                                 "manager-dashboard.html"
                             );
+
+                            return;
                         }
 
                     },
-                    500
+                    300
                 );
 
             }
 
 
             // ==========================================
-            // BACKEND CONNECTION ERROR
+            // BACKEND ERROR
             // ==========================================
 
             catch (error) {
 
                 console.error(
-                    "Backend connection error:",
+                    "LOGIN ERROR:",
                     error
                 );
 
 
-                message.textContent =
-                    "Cannot connect to server. Please try again.";
+                if (message) {
 
-                message.style.color =
-                    "red";
+                    message.textContent =
+                        "Cannot connect to server. Please try again.";
+
+                    message.style.color =
+                        "red";
+                }
+
             }
 
         }
     );
+
 }
 
 
@@ -529,39 +574,41 @@ if (loginForm) {
 // USER DETAILS
 // ======================================================
 
-const userName =
-    localStorage.getItem("userName");
-
-
-const userRole =
-    localStorage.getItem("userRole");
-
-
 const userNameElement =
-    document.getElementById("userName");
-
+    document.getElementById(
+        "userName"
+    );
 
 const userRoleElement =
-    document.getElementById("userRole");
+    document.getElementById(
+        "userRole"
+    );
+
+
+const savedUserName =
+    getLoggedInUser();
+
+const savedUserRole =
+    getLoggedInRole();
 
 
 if (
     userNameElement &&
-    userName
+    savedUserName
 ) {
 
     userNameElement.textContent =
-        userName;
+        savedUserName;
 }
 
 
 if (
     userRoleElement &&
-    userRole
+    savedUserRole
 ) {
 
     userRoleElement.textContent =
-        userRole;
+        savedUserRole;
 }
 
 
@@ -570,39 +617,44 @@ if (
 // ======================================================
 
 const profileNameElement =
-    document.getElementById("profileName");
-
+    document.getElementById(
+        "profileName"
+    );
 
 const profileFullNameElement =
-    document.getElementById("profileFullName");
-
+    document.getElementById(
+        "profileFullName"
+    );
 
 const profileLoginIdElement =
-    document.getElementById("profileLoginId");
-
+    document.getElementById(
+        "profileLoginId"
+    );
 
 const profileRoleElement =
-    document.getElementById("profileRole");
-
+    document.getElementById(
+        "profileRole"
+    );
 
 const profileRoleInfoElement =
-    document.getElementById("profileRoleInfo");
-
+    document.getElementById(
+        "profileRoleInfo"
+    );
 
 const profileInitialElement =
-    document.getElementById("profileInitial");
+    document.getElementById(
+        "profileInitial"
+    );
 
 
 const savedName =
-    localStorage.getItem("userName");
-
+    getLoggedInUser();
 
 const savedRole =
-    localStorage.getItem("userRole");
-
+    getLoggedInRole();
 
 const savedLoginId =
-    localStorage.getItem("loginId");
+    getLoginId();
 
 
 // ======================================================
@@ -696,7 +748,9 @@ if (
 // ======================================================
 
 const calendar =
-    document.getElementById("calendar");
+    document.getElementById(
+        "calendar"
+    );
 
 
 if (calendar) {
@@ -711,60 +765,50 @@ if (calendar) {
             "currentMonth"
         );
 
-
     const prevMonthButton =
         document.getElementById(
             "prevMonth"
         );
-
 
     const nextMonthButton =
         document.getElementById(
             "nextMonth"
         );
 
-
     const todayShiftElement =
         document.getElementById(
             "todayShift"
         );
-
 
     const currentRotationElement =
         document.getElementById(
             "currentRotation"
         );
 
-
     const workingDaysElement =
         document.getElementById(
             "workingDays"
         );
-
 
     const weekOffElement =
         document.getElementById(
             "weekOff"
         );
 
-
     const nextShiftElement =
         document.getElementById(
             "nextShift"
         );
-
 
     const nextShiftDateElement =
         document.getElementById(
             "nextShiftDate"
         );
 
-
     const nextShiftTimeElement =
         document.getElementById(
             "nextShiftTime"
         );
-
 
     const upcomingSchedule =
         document.getElementById(
@@ -838,9 +882,7 @@ if (calendar) {
             ) % 14;
 
 
-        // ==================================================
         // DAY SHIFT
-        // ==================================================
 
         if (
             cycleDay < 5
@@ -862,13 +904,12 @@ if (calendar) {
 
                 className:
                     "day-shift"
+
             };
         }
 
 
-        // ==================================================
-        // FIRST WEEK OFF
-        // ==================================================
+        // WEEK OFF
 
         if (
             cycleDay < 7
@@ -890,13 +931,12 @@ if (calendar) {
 
                 className:
                     "week-off"
+
             };
         }
 
 
-        // ==================================================
         // NIGHT SHIFT
-        // ==================================================
 
         if (
             cycleDay < 12
@@ -918,13 +958,12 @@ if (calendar) {
 
                 className:
                     "night-shift"
+
             };
         }
 
 
-        // ==================================================
-        // SECOND WEEK OFF
-        // ==================================================
+        // WEEK OFF
 
         return {
 
@@ -942,7 +981,9 @@ if (calendar) {
 
             className:
                 "week-off"
+
         };
+
     }
 
 
@@ -989,19 +1030,17 @@ if (calendar) {
                         "div"
                     );
 
-
                 dayName.classList.add(
                     "day-name"
                 );
 
-
                 dayName.textContent =
                     day;
-
 
                 calendar.appendChild(
                     dayName
                 );
+
             }
         );
 
@@ -1033,15 +1072,14 @@ if (calendar) {
                     "div"
                 );
 
-
             emptyBox.classList.add(
                 "empty"
             );
 
-
             calendar.appendChild(
                 emptyBox
             );
+
         }
 
 
@@ -1056,7 +1094,6 @@ if (calendar) {
                     "div"
                 );
 
-
             dateBox.classList.add(
                 "date"
             );
@@ -1067,10 +1104,8 @@ if (calendar) {
                     "span"
                 );
 
-
             dateNumber.textContent =
                 date;
-
 
             dateBox.appendChild(
                 dateNumber
@@ -1127,12 +1162,14 @@ if (calendar) {
             calendar.appendChild(
                 dateBox
             );
+
         }
+
     }
 
 
     // ==================================================
-    // TODAY'S SHIFT
+    // TODAY SHIFT
     // ==================================================
 
     function updateTodayShift() {
@@ -1175,6 +1212,7 @@ if (calendar) {
             weekOffElement.textContent =
                 "2 Days";
         }
+
     }
 
 
@@ -1256,7 +1294,9 @@ if (calendar) {
             nextDate.setDate(
                 nextDate.getDate() + 1
             );
+
         }
+
     }
 
 
@@ -1390,16 +1430,13 @@ if (calendar) {
                 dateElement
             );
 
-
             scheduleCard.appendChild(
                 shiftElement
             );
 
-
             scheduleCard.appendChild(
                 timingElement
             );
-
 
             scheduleCard.appendChild(
                 statusElement
@@ -1409,7 +1446,9 @@ if (calendar) {
             upcomingSchedule.appendChild(
                 scheduleCard
             );
+
         }
+
     }
 
 
@@ -1440,8 +1479,10 @@ if (calendar) {
                     navigationYear,
                     navigationMonth
                 );
+
             }
         );
+
     }
 
 
@@ -1472,8 +1513,10 @@ if (calendar) {
                     navigationYear,
                     navigationMonth
                 );
+
             }
         );
+
     }
 
 
@@ -1486,12 +1529,12 @@ if (calendar) {
         navigationMonth
     );
 
-
     updateTodayShift();
 
     updateNextShift();
 
     updateUpcomingSchedule();
+
 }
 
 
@@ -1517,25 +1560,19 @@ if (changePasswordForm) {
             const currentPassword =
                 document.getElementById(
                     "currentPassword"
-                )
-                .value
-                .trim();
+                ).value.trim();
 
 
             const newPassword =
                 document.getElementById(
                     "newPassword"
-                )
-                .value
-                .trim();
+                ).value.trim();
 
 
             const confirmPassword =
                 document.getElementById(
                     "confirmPassword"
-                )
-                .value
-                .trim();
+                ).value.trim();
 
 
             const passwordMessage =
@@ -1545,14 +1582,10 @@ if (changePasswordForm) {
 
 
             const loginId =
-                localStorage.getItem(
-                    "loginId"
-                );
+                getLoginId();
 
 
-            // ==========================================
             // CHECK LOGIN ID
-            // ==========================================
 
             if (!loginId) {
 
@@ -1566,9 +1599,7 @@ if (changePasswordForm) {
             }
 
 
-            // ==========================================
-            // CHECK EMPTY FIELDS
-            // ==========================================
+            // EMPTY
 
             if (
                 !currentPassword ||
@@ -1586,9 +1617,7 @@ if (changePasswordForm) {
             }
 
 
-            // ==========================================
             // PASSWORD LENGTH
-            // ==========================================
 
             if (
                 newPassword.length < 8
@@ -1604,9 +1633,7 @@ if (changePasswordForm) {
             }
 
 
-            // ==========================================
             // PASSWORD MATCH
-            // ==========================================
 
             if (
                 newPassword !==
@@ -1622,10 +1649,6 @@ if (changePasswordForm) {
                 return;
             }
 
-
-            // ==========================================
-            // CONNECT TO BACKEND
-            // ==========================================
 
             passwordMessage.textContent =
                 "Changing password...";
@@ -1671,10 +1694,6 @@ if (changePasswordForm) {
                     await response.json();
 
 
-                // ======================================
-                // PASSWORD CHANGE FAILED
-                // ======================================
-
                 if (
                     !response.ok ||
                     !data.success
@@ -1691,18 +1710,12 @@ if (changePasswordForm) {
                 }
 
 
-                // ======================================
-                // PASSWORD CHANGE SUCCESS
-                // ======================================
-
                 passwordMessage.textContent =
                     "Password changed successfully!";
 
                 passwordMessage.style.color =
                     "green";
 
-
-                // Clear password fields
 
                 document.getElementById(
                     "currentPassword"
@@ -1721,10 +1734,6 @@ if (changePasswordForm) {
             }
 
 
-            // ==========================================
-            // CONNECTION ERROR
-            // ==========================================
-
             catch (error) {
 
                 console.error(
@@ -1742,6 +1751,7 @@ if (changePasswordForm) {
 
         }
     );
+
 }
 
 
@@ -1753,58 +1763,105 @@ window.addEventListener(
     "pageshow",
     function () {
 
-        const currentPage =
+        const page =
             window.location.pathname
                 .split("/")
-                .pop();
+                .pop() || "index.html";
 
 
-        const protectedPages = [
-
-            "dashboard.html",
-            "my-schedule.html",
-            "profile.html",
-
-            "manager-dashboard.html",
-            "employees.html",
-            "employee-details.html",
-            "schedule2.html",
-            "manager-profile.html"
-
-        ];
+        const user =
+            getLoggedInUser();
 
 
-        const currentUser =
-            localStorage.getItem(
-                "userName"
+        const role =
+            normalizeRole(
+                getLoggedInRole()
             );
 
 
-        const currentRole =
-            localStorage.getItem(
-                "userRole"
-            );
-
-
-        // ==============================================
-        // IF LOGGED OUT AND CACHED PAGE IS OPENED
-        // ==============================================
+        // ------------------------------------------
+        // LOGGED OUT USER
+        // ------------------------------------------
 
         if (
-            protectedPages.includes(
-                currentPage
-            ) &&
-            (
-                !currentUser ||
-                !currentRole
-            )
+            protectedPages.includes(page) &&
+            (!user || !role)
         ) {
 
             window.location.replace(
                 "index.html"
             );
+
+            return;
+        }
+
+
+        // ------------------------------------------
+        // ASSOCIATE
+        // ------------------------------------------
+
+        if (
+            associatePages.includes(page) &&
+            role !== "associate"
+        ) {
+
+            window.location.replace(
+                "index.html"
+            );
+
+            return;
+        }
+
+
+        // ------------------------------------------
+        // MANAGER
+        // ------------------------------------------
+
+        if (
+            managerPages.includes(page) &&
+            role !== "manager"
+        ) {
+
+            window.location.replace(
+                "index.html"
+            );
+
+            return;
         }
 
     }
 );
-```
+
+
+// ======================================================
+// PREVENT BROWSER CACHE AFTER LOGOUT
+// ======================================================
+
+window.addEventListener(
+    "load",
+    function () {
+
+        if (
+            "navigation" in performance
+        ) {
+
+            const navigation =
+                performance.getEntriesByType(
+                    "navigation"
+                )[0];
+
+
+            if (
+                navigation &&
+                navigation.type ===
+                "back_forward"
+            ) {
+
+                checkPageAccess();
+
+            }
+
+        }
+
+    }
+);
