@@ -16,14 +16,33 @@ const currentPage =
 
 // ======================================================
 // LOGIN STATUS FUNCTIONS
+// LOCAL STORAGE + SESSION STORAGE BACKUP
 // ======================================================
 
 function getLoggedInUser() {
-    return localStorage.getItem("userName");
+
+    return (
+        localStorage.getItem("userName") ||
+        sessionStorage.getItem("userName")
+    );
 }
 
+
 function getLoggedInRole() {
-    return localStorage.getItem("userRole");
+
+    return (
+        localStorage.getItem("userRole") ||
+        sessionStorage.getItem("userRole")
+    );
+}
+
+
+function getLoggedInId() {
+
+    return (
+        localStorage.getItem("loginId") ||
+        sessionStorage.getItem("loginId")
+    );
 }
 
 
@@ -41,17 +60,22 @@ const isLoginPage =
 // ======================================================
 
 const associatePages = [
+
     "dashboard.html",
     "my-schedule.html",
     "profile.html"
+
 ];
 
+
 const managerPages = [
+
     "manager-dashboard.html",
     "employees.html",
     "employee-details.html",
     "schedule2.html",
     "manager-profile.html"
+
 ];
 
 
@@ -68,14 +92,56 @@ function checkPageAccess() {
         getLoggedInRole();
 
 
-    // Login page
+    // ==================================================
+    // LOGIN PAGE
+    // ==================================================
+
     if (isLoginPage) {
+
+        // If already logged in,
+        // don't allow mobile browser to stay on login page
+
+        if (
+            user &&
+            role
+        ) {
+
+            if (
+                role === "Associate"
+            ) {
+
+                window.location.replace(
+                    "dashboard.html"
+                );
+
+                return;
+            }
+
+
+            if (
+                role === "Manager"
+            ) {
+
+                window.location.replace(
+                    "manager-dashboard.html"
+                );
+
+                return;
+            }
+        }
+
         return;
     }
 
 
-    // Protected page without login
-    if (!user || !role) {
+    // ==================================================
+    // PROTECTED PAGE WITHOUT LOGIN
+    // ==================================================
+
+    if (
+        !user ||
+        !role
+    ) {
 
         window.location.replace(
             "index.html"
@@ -85,7 +151,10 @@ function checkPageAccess() {
     }
 
 
-    // Associate page protection
+    // ==================================================
+    // ASSOCIATE PAGE PROTECTION
+    // ==================================================
+
     if (
         associatePages.includes(currentPage) &&
         role !== "Associate"
@@ -99,7 +168,10 @@ function checkPageAccess() {
     }
 
 
-    // Manager page protection
+    // ==================================================
+    // MANAGER PAGE PROTECTION
+    // ==================================================
+
     if (
         managerPages.includes(currentPage) &&
         role !== "Manager"
@@ -114,7 +186,10 @@ function checkPageAccess() {
 }
 
 
-// Run page protection
+// ======================================================
+// RUN PAGE PROTECTION
+// ======================================================
+
 checkPageAccess();
 
 
@@ -124,44 +199,113 @@ checkPageAccess();
 
 function logoutUser() {
 
-    // Clear login session
-    localStorage.removeItem("userName");
-    localStorage.removeItem("userRole");
-    localStorage.removeItem("loginId");
+    // ==================================================
+    // CLEAR LOCAL STORAGE
+    // ==================================================
+
+    localStorage.removeItem(
+        "userName"
+    );
+
+    localStorage.removeItem(
+        "userRole"
+    );
+
+    localStorage.removeItem(
+        "loginId"
+    );
 
 
-    // Clear login fields
+    // ==================================================
+    // CLEAR SESSION STORAGE
+    // ==================================================
+
+    sessionStorage.removeItem(
+        "userName"
+    );
+
+    sessionStorage.removeItem(
+        "userRole"
+    );
+
+    sessionStorage.removeItem(
+        "loginId"
+    );
+
+
+    sessionStorage.setItem(
+        "loggedOut",
+        "true"
+    );
+
+
+    // ==================================================
+    // CLEAR LOGIN FIELDS
+    // ==================================================
+
     const nameInput =
-        document.getElementById("name");
+        document.getElementById(
+            "name"
+        );
+
 
     const loginIdInput =
-        document.getElementById("loginId");
+        document.getElementById(
+            "loginId"
+        );
+
 
     const passwordInput =
-        document.getElementById("password");
+        document.getElementById(
+            "password"
+        );
+
 
     const roleInput =
-        document.getElementById("role");
+        document.getElementById(
+            "role"
+        );
 
 
     if (nameInput) {
+
         nameInput.value = "";
+
     }
+
 
     if (loginIdInput) {
+
         loginIdInput.value = "";
+
     }
+
 
     if (passwordInput) {
+
         passwordInput.value = "";
+
     }
+
 
     if (roleInput) {
+
         roleInput.value = "";
+
     }
 
 
-    // Go to login page
+    // ==================================================
+    // FORCE LOGIN PAGE
+    // ==================================================
+
+    window.history.replaceState(
+        null,
+        "",
+        "index.html"
+    );
+
+
     window.location.replace(
         "index.html"
     );
@@ -172,21 +316,32 @@ function logoutUser() {
 // LOGOUT BUTTON
 // ======================================================
 
-const logoutButton =
-    document.querySelector(".logout-btn");
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const logoutButton =
+            document.querySelector(
+                ".logout-btn"
+            );
 
 
-if (logoutButton) {
+        if (logoutButton) {
 
-    logoutButton.addEventListener(
-        "click",
-        function () {
+            logoutButton.addEventListener(
+                "click",
+                function (event) {
 
-            logoutUser();
+                    event.preventDefault();
 
+                    logoutUser();
+
+                }
+            );
         }
-    );
-}
+
+    }
+);
 
 
 // ======================================================
@@ -194,7 +349,9 @@ if (logoutButton) {
 // ======================================================
 
 const loginForm =
-    document.getElementById("loginForm");
+    document.getElementById(
+        "loginForm"
+    );
 
 
 if (loginForm) {
@@ -211,30 +368,40 @@ if (loginForm) {
             // ==========================================
 
             const name =
-                document.getElementById("name")
-                    .value
-                    .trim();
+                document.getElementById(
+                    "name"
+                )
+                .value
+                .trim();
 
 
             const loginId =
-                document.getElementById("loginId")
-                    .value
-                    .trim();
+                document.getElementById(
+                    "loginId"
+                )
+                .value
+                .trim();
 
 
             const password =
-                document.getElementById("password")
-                    .value
-                    .trim();
+                document.getElementById(
+                    "password"
+                )
+                .value
+                .trim();
 
 
             const role =
-                document.getElementById("role")
-                    .value;
+                document.getElementById(
+                    "role"
+                )
+                .value;
 
 
             const message =
-                document.getElementById("message");
+                document.getElementById(
+                    "message"
+                );
 
 
             // ==========================================
@@ -366,44 +533,107 @@ if (loginForm) {
                 // LOGIN SUCCESS
                 // ======================================
 
+                const loggedUser =
+                    String(
+                        data.user.name
+                    );
+
+
+                const loggedRole =
+                    String(
+                        data.user.role
+                    );
+
+
+                const loggedLoginId =
+                    String(
+                        data.user.loginId
+                    );
+
+
+                // ======================================
+                // SAVE LOCAL STORAGE
+                // ======================================
+
                 localStorage.setItem(
                     "userName",
-                    data.user.name
+                    loggedUser
                 );
 
 
                 localStorage.setItem(
                     "userRole",
-                    data.user.role
+                    loggedRole
                 );
 
 
                 localStorage.setItem(
                     "loginId",
-                    data.user.loginId
+                    loggedLoginId
                 );
 
 
                 // ======================================
-                // VERIFY LOCAL STORAGE
+                // SAVE SESSION STORAGE BACKUP
+                // ======================================
+
+                sessionStorage.setItem(
+                    "userName",
+                    loggedUser
+                );
+
+
+                sessionStorage.setItem(
+                    "userRole",
+                    loggedRole
+                );
+
+
+                sessionStorage.setItem(
+                    "loginId",
+                    loggedLoginId
+                );
+
+
+                // Remove old logout flag
+
+                sessionStorage.removeItem(
+                    "loggedOut"
+                );
+
+
+                // ======================================
+                // VERIFY STORAGE
                 // ======================================
 
                 const savedUser =
-                    localStorage.getItem(
-                        "userName"
-                    );
+                    getLoggedInUser();
 
 
                 const savedRole =
-                    localStorage.getItem(
-                        "userRole"
-                    );
+                    getLoggedInRole();
 
 
                 const savedLoginId =
-                    localStorage.getItem(
-                        "loginId"
-                    );
+                    getLoggedInId();
+
+
+                console.log(
+                    "SAVED USER:",
+                    savedUser
+                );
+
+
+                console.log(
+                    "SAVED ROLE:",
+                    savedRole
+                );
+
+
+                console.log(
+                    "SAVED LOGIN ID:",
+                    savedLoginId
+                );
 
 
                 if (
@@ -435,6 +665,7 @@ if (loginForm) {
 
                 // ======================================
                 // ROLE BASED REDIRECT
+                // MOBILE SAFE
                 // ======================================
 
                 setTimeout(
@@ -445,8 +676,14 @@ if (loginForm) {
                             "Associate"
                         ) {
 
-                            window.location.href =
-                                "dashboard.html";
+                            console.log(
+                                "Redirecting to Associate Dashboard"
+                            );
+
+
+                            window.location.replace(
+                                "dashboard.html"
+                            );
 
                         }
 
@@ -455,8 +692,14 @@ if (loginForm) {
                             "Manager"
                         ) {
 
-                            window.location.href =
-                                "manager-dashboard.html";
+                            console.log(
+                                "Redirecting to Manager Dashboard"
+                            );
+
+
+                            window.location.replace(
+                                "manager-dashboard.html"
+                            );
 
                         }
 
@@ -470,7 +713,7 @@ if (loginForm) {
                         }
 
                     },
-                    300
+                    500
                 );
 
             }
@@ -501,23 +744,158 @@ if (loginForm) {
 
 
 // ======================================================
+// MOBILE / BROWSER BACK BUTTON PROTECTION
+// ======================================================
+
+window.addEventListener(
+    "pageshow",
+    function (event) {
+
+        const user =
+            getLoggedInUser();
+
+
+        const role =
+            getLoggedInRole();
+
+
+        const protectedPages = [
+
+            "dashboard.html",
+            "my-schedule.html",
+            "profile.html",
+
+            "manager-dashboard.html",
+            "employees.html",
+            "employee-details.html",
+            "schedule2.html",
+            "manager-profile.html"
+
+        ];
+
+
+        const page =
+            window.location.pathname
+                .split("/")
+                .pop();
+
+
+        // ==================================================
+        // CACHED PROTECTED PAGE WITHOUT LOGIN
+        // ==================================================
+
+        if (
+            protectedPages.includes(page) &&
+            (!user || !role)
+        ) {
+
+            window.history.replaceState(
+                null,
+                "",
+                "index.html"
+            );
+
+
+            window.location.replace(
+                "index.html"
+            );
+
+            return;
+        }
+
+
+        // ==================================================
+        // BROWSER CACHE / MOBILE BACK BUTTON
+        // ==================================================
+
+        if (
+            event.persisted &&
+            protectedPages.includes(page) &&
+            (!user || !role)
+        ) {
+
+            window.location.replace(
+                "index.html"
+            );
+        }
+
+    }
+);
+
+
+// ======================================================
+// BROWSER BACK BUTTON
+// ======================================================
+
+window.addEventListener(
+    "popstate",
+    function () {
+
+        const user =
+            getLoggedInUser();
+
+
+        const role =
+            getLoggedInRole();
+
+
+        const protectedPages = [
+
+            "dashboard.html",
+            "my-schedule.html",
+            "profile.html",
+
+            "manager-dashboard.html",
+            "employees.html",
+            "employee-details.html",
+            "schedule2.html",
+            "manager-profile.html"
+
+        ];
+
+
+        const page =
+            window.location.pathname
+                .split("/")
+                .pop();
+
+
+        if (
+            protectedPages.includes(page) &&
+            (!user || !role)
+        ) {
+
+            window.location.replace(
+                "index.html"
+            );
+        }
+
+    }
+);
+
+
+// ======================================================
 // USER DETAILS
 // ======================================================
 
 const userName =
-    localStorage.getItem("userName");
+    getLoggedInUser();
 
 
 const userRole =
-    localStorage.getItem("userRole");
+    getLoggedInRole();
 
 
 const userNameElement =
-    document.getElementById("userName");
+    document.getElementById(
+        "userName"
+    );
 
 
 const userRoleElement =
-    document.getElementById("userRole");
+    document.getElementById(
+        "userRole"
+    );
 
 
 if (
@@ -545,39 +923,51 @@ if (
 // ======================================================
 
 const profileNameElement =
-    document.getElementById("profileName");
+    document.getElementById(
+        "profileName"
+    );
 
 
 const profileFullNameElement =
-    document.getElementById("profileFullName");
+    document.getElementById(
+        "profileFullName"
+    );
 
 
 const profileLoginIdElement =
-    document.getElementById("profileLoginId");
+    document.getElementById(
+        "profileLoginId"
+    );
 
 
 const profileRoleElement =
-    document.getElementById("profileRole");
+    document.getElementById(
+        "profileRole"
+    );
 
 
 const profileRoleInfoElement =
-    document.getElementById("profileRoleInfo");
+    document.getElementById(
+        "profileRoleInfo"
+    );
 
 
 const profileInitialElement =
-    document.getElementById("profileInitial");
+    document.getElementById(
+        "profileInitial"
+    );
 
 
 const savedName =
-    localStorage.getItem("userName");
+    getLoggedInUser();
 
 
 const savedRole =
-    localStorage.getItem("userRole");
+    getLoggedInRole();
 
 
 const savedLoginId =
-    localStorage.getItem("loginId");
+    getLoggedInId();
 
 
 // ======================================================
@@ -671,7 +1061,9 @@ if (
 // ======================================================
 
 const calendar =
-    document.getElementById("calendar");
+    document.getElementById(
+        "calendar"
+    );
 
 
 if (calendar) {
@@ -813,8 +1205,6 @@ if (calendar) {
             ) % 14;
 
 
-        // DAY SHIFT
-
         if (
             cycleDay < 5
         ) {
@@ -835,11 +1225,10 @@ if (calendar) {
 
                 className:
                     "day-shift"
+
             };
         }
 
-
-        // FIRST WEEK OFF
 
         if (
             cycleDay < 7
@@ -861,11 +1250,10 @@ if (calendar) {
 
                 className:
                     "week-off"
+
             };
         }
 
-
-        // NIGHT SHIFT
 
         if (
             cycleDay < 12
@@ -887,11 +1275,10 @@ if (calendar) {
 
                 className:
                     "night-shift"
+
             };
         }
 
-
-        // SECOND WEEK OFF
 
         return {
 
@@ -909,6 +1296,7 @@ if (calendar) {
 
             className:
                 "week-off"
+
         };
     }
 
@@ -926,7 +1314,9 @@ if (calendar) {
             "";
 
 
-        if (currentMonthElement) {
+        if (
+            currentMonthElement
+        ) {
 
             currentMonthElement.textContent =
                 monthNames[month] +
@@ -969,6 +1359,7 @@ if (calendar) {
                 calendar.appendChild(
                     dayName
                 );
+
             }
         );
 
@@ -1116,28 +1507,36 @@ if (calendar) {
             );
 
 
-        if (todayShiftElement) {
+        if (
+            todayShiftElement
+        ) {
 
             todayShiftElement.textContent =
                 todayInfo.shift;
         }
 
 
-        if (currentRotationElement) {
+        if (
+            currentRotationElement
+        ) {
 
             currentRotationElement.textContent =
                 todayInfo.shift;
         }
 
 
-        if (workingDaysElement) {
+        if (
+            workingDaysElement
+        ) {
 
             workingDaysElement.textContent =
                 "5 Days";
         }
 
 
-        if (weekOffElement) {
+        if (
+            weekOffElement
+        ) {
 
             weekOffElement.textContent =
                 "2 Days";
@@ -1233,7 +1632,9 @@ if (calendar) {
 
     function updateUpcomingSchedule() {
 
-        if (!upcomingSchedule) {
+        if (
+            !upcomingSchedule
+        ) {
 
             return;
         }
@@ -1384,7 +1785,9 @@ if (calendar) {
     // PREVIOUS MONTH
     // ==================================================
 
-    if (prevMonthButton) {
+    if (
+        prevMonthButton
+    ) {
 
         prevMonthButton.addEventListener(
             "click",
@@ -1407,6 +1810,7 @@ if (calendar) {
                     navigationYear,
                     navigationMonth
                 );
+
             }
         );
     }
@@ -1416,7 +1820,9 @@ if (calendar) {
     // NEXT MONTH
     // ==================================================
 
-    if (nextMonthButton) {
+    if (
+        nextMonthButton
+    ) {
 
         nextMonthButton.addEventListener(
             "click",
@@ -1439,6 +1845,7 @@ if (calendar) {
                     navigationYear,
                     navigationMonth
                 );
+
             }
         );
     }
@@ -1472,7 +1879,9 @@ const changePasswordForm =
     );
 
 
-if (changePasswordForm) {
+if (
+    changePasswordForm
+) {
 
     changePasswordForm.addEventListener(
         "submit",
@@ -1512,14 +1921,16 @@ if (changePasswordForm) {
 
 
             const loginId =
-                localStorage.getItem(
-                    "loginId"
-                );
+                getLoggedInId();
 
 
+            // ==================================================
             // CHECK LOGIN ID
+            // ==================================================
 
-            if (!loginId) {
+            if (
+                !loginId
+            ) {
 
                 passwordMessage.textContent =
                     "User login information not found.";
@@ -1531,7 +1942,9 @@ if (changePasswordForm) {
             }
 
 
+            // ==================================================
             // CHECK EMPTY FIELDS
+            // ==================================================
 
             if (
                 !currentPassword ||
@@ -1549,7 +1962,9 @@ if (changePasswordForm) {
             }
 
 
+            // ==================================================
             // PASSWORD LENGTH
+            // ==================================================
 
             if (
                 newPassword.length < 8
@@ -1565,7 +1980,9 @@ if (changePasswordForm) {
             }
 
 
+            // ==================================================
             // PASSWORD MATCH
+            // ==================================================
 
             if (
                 newPassword !==
@@ -1582,7 +1999,9 @@ if (changePasswordForm) {
             }
 
 
+            // ==================================================
             // CONNECT TO BACKEND
+            // ==================================================
 
             passwordMessage.textContent =
                 "Changing password...";
@@ -1628,7 +2047,9 @@ if (changePasswordForm) {
                     await response.json();
 
 
+                // ==================================================
                 // PASSWORD CHANGE FAILED
+                // ==================================================
 
                 if (
                     !response.ok ||
@@ -1646,7 +2067,9 @@ if (changePasswordForm) {
                 }
 
 
+                // ==================================================
                 // PASSWORD CHANGE SUCCESS
+                // ==================================================
 
                 passwordMessage.textContent =
                     "Password changed successfully!";
@@ -1669,11 +2092,12 @@ if (changePasswordForm) {
                     "confirmPassword"
                 ).value = "";
 
-
             }
 
 
+            // ==================================================
             // CONNECTION ERROR
+            // ==================================================
 
             catch (error) {
 
