@@ -235,15 +235,40 @@ function checkPageAccess() {
 checkPageAccess();
 
 
-// ======================================================
-// LOGOUT
-// ======================================================
-
 function logoutUser() {
 
-    console.log(
-        "LOGOUT STARTED"
+    // ==========================================
+    // CLEAR ALL LOGIN DATA
+    // ==========================================
+
+    localStorage.clear();
+    sessionStorage.clear();
+
+
+    // ==========================================
+    // REMOVE BROWSER HISTORY ENTRY
+    // ==========================================
+
+    window.history.pushState(
+        null,
+        "",
+        "index.html"
     );
+
+
+    // ==========================================
+    // GO DIRECTLY TO LOGIN PAGE
+    // ==========================================
+
+    window.location.href =
+        window.location.origin +
+        window.location.pathname
+            .replace(
+                /[^/]*$/,
+                ""
+            ) +
+        "index.html";
+
 
 
     // ==================================================
