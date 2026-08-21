@@ -1,8 +1,8 @@
 // ======================================================
 // AI AUTOMATIC ROSTER SYSTEM
-// BACKEND LOGIN + LOGOUT + ROLE PROTECTION
+// LOGIN + LOGOUT + ROLE PROTECTION
 // PROFILE + CALENDAR + CHANGE PASSWORD
-// MOBILE LOGIN + LOGOUT FIX
+// MOBILE LOGIN + LOGOUT + BACK BUTTON FIX
 // ======================================================
 
 
@@ -19,19 +19,14 @@ const currentPage =
 // ======================================================
 
 function getLoggedInUser() {
-
     return localStorage.getItem("userName");
 }
 
-
 function getLoggedInRole() {
-
     return localStorage.getItem("userRole");
 }
 
-
 function getLoggedInId() {
-
     return localStorage.getItem("loginId");
 }
 
@@ -50,37 +45,28 @@ const isLoginPage =
 // ======================================================
 
 const associatePages = [
-
     "dashboard.html",
     "my-schedule.html",
     "profile.html"
-
 ];
 
-
 const managerPages = [
-
     "manager-dashboard.html",
     "employees.html",
     "employee-details.html",
     "schedule2.html",
     "manager-profile.html"
-
 ];
 
-
 const protectedPages = [
-
     "dashboard.html",
     "my-schedule.html",
     "profile.html",
-
     "manager-dashboard.html",
     "employees.html",
     "employee-details.html",
     "schedule2.html",
     "manager-profile.html"
-
 ];
 
 
@@ -92,23 +78,15 @@ function redirectToDashboard(role) {
 
     if (role === "Associate") {
 
-        window.location.replace(
-            "dashboard.html"
-        );
-
+        window.location.replace("dashboard.html");
         return true;
     }
-
 
     if (role === "Manager") {
 
-        window.location.replace(
-            "manager-dashboard.html"
-        );
-
+        window.location.replace("manager-dashboard.html");
         return true;
     }
-
 
     return false;
 }
@@ -120,17 +98,11 @@ function redirectToDashboard(role) {
 
 function checkPageAccess() {
 
-    const user =
-        getLoggedInUser();
-
-    const role =
-        getLoggedInRole();
-
+    const user = getLoggedInUser();
+    const role = getLoggedInRole();
 
     const loggedOut =
-        sessionStorage.getItem(
-            "loggedOut"
-        );
+        sessionStorage.getItem("loggedOut");
 
 
     // ==================================================
@@ -139,29 +111,17 @@ function checkPageAccess() {
 
     if (isLoginPage) {
 
-        // If logout just happened,
-        // stay on login page.
-
+        // After logout stay on login page
         if (loggedOut === "true") {
-
             return;
         }
-
 
         // Already logged in
+        if (user && role) {
 
-        if (
-            user &&
-            role
-        ) {
-
-            redirectToDashboard(
-                role
-            );
-
+            redirectToDashboard(role);
             return;
         }
-
 
         return;
     }
@@ -171,15 +131,9 @@ function checkPageAccess() {
     // PROTECTED PAGE WITHOUT LOGIN
     // ==================================================
 
-    if (
-        !user ||
-        !role
-    ) {
+    if (!user || !role) {
 
-        window.location.replace(
-            "index.html"
-        );
-
+        window.location.replace("index.html");
         return;
     }
 
@@ -189,16 +143,11 @@ function checkPageAccess() {
     // ==================================================
 
     if (
-        associatePages.includes(
-            currentPage
-        ) &&
+        associatePages.includes(currentPage) &&
         role !== "Associate"
     ) {
 
-        window.location.replace(
-            "index.html"
-        );
-
+        window.location.replace("index.html");
         return;
     }
 
@@ -208,16 +157,11 @@ function checkPageAccess() {
     // ==================================================
 
     if (
-        managerPages.includes(
-            currentPage
-        ) &&
+        managerPages.includes(currentPage) &&
         role !== "Manager"
     ) {
 
-        window.location.replace(
-            "index.html"
-        );
-
+        window.location.replace("index.html");
         return;
     }
 }
@@ -232,107 +176,73 @@ checkPageAccess();
 
 // ======================================================
 // LOGOUT
-// FIXED
 // ======================================================
 
 function logoutUser() {
 
-    // ==========================================
     // IMPORTANT:
-    // SET LOGGED OUT FLAG FIRST
-    // ==========================================
-
+    // Set loggedOut BEFORE clearing user data
     sessionStorage.setItem(
         "loggedOut",
         "true"
     );
 
 
-    // ==========================================
-    // CLEAR LOGIN DATA
-    // ==========================================
+    // ==================================================
+    // CLEAR LOCAL STORAGE
+    // ==================================================
 
-    localStorage.removeItem(
-        "userName"
-    );
-
-    localStorage.removeItem(
-        "userRole"
-    );
-
-    localStorage.removeItem(
-        "loginId"
-    );
+    localStorage.removeItem("userName");
+    localStorage.removeItem("userRole");
+    localStorage.removeItem("loginId");
 
 
-    sessionStorage.removeItem(
-        "userName"
-    );
+    // ==================================================
+    // CLEAR SESSION STORAGE USER DATA
+    // ==================================================
 
-    sessionStorage.removeItem(
-        "userRole"
-    );
-
-    sessionStorage.removeItem(
-        "loginId"
-    );
+    sessionStorage.removeItem("userName");
+    sessionStorage.removeItem("userRole");
+    sessionStorage.removeItem("loginId");
 
 
-    // ==========================================
+    // ==================================================
     // CLEAR LOGIN FORM
-    // ==========================================
+    // ==================================================
 
     const nameInput =
-        document.getElementById(
-            "name"
-        );
-
+        document.getElementById("name");
 
     const loginIdInput =
-        document.getElementById(
-            "loginId"
-        );
-
+        document.getElementById("loginId");
 
     const passwordInput =
-        document.getElementById(
-            "password"
-        );
-
+        document.getElementById("password");
 
     const roleInput =
-        document.getElementById(
-            "role"
-        );
+        document.getElementById("role");
 
 
     if (nameInput) {
-
         nameInput.value = "";
     }
 
-
     if (loginIdInput) {
-
         loginIdInput.value = "";
     }
 
-
     if (passwordInput) {
-
         passwordInput.value = "";
     }
 
-
     if (roleInput) {
-
         roleInput.value = "";
     }
 
 
-    // ==========================================
-    // REMOVE CURRENT PAGE FROM CURRENT HISTORY
-    // ==========================================
+    // ==================================================
+    // REPLACE CURRENT HISTORY ENTRY
+    // ==================================================
 
     window.history.replaceState(
         null,
@@ -341,13 +251,11 @@ function logoutUser() {
     );
 
 
-    // ==========================================
+    // ==================================================
     // GO TO LOGIN PAGE
-    // ==========================================
+    // ==================================================
 
-    window.location.replace(
-        "index.html"
-    );
+    window.location.replace("index.html");
 }
 
 
@@ -355,31 +263,21 @@ function logoutUser() {
 // LOGOUT BUTTON
 // ======================================================
 
-// Delegated click works on mobile also.
-
 document.addEventListener(
     "click",
     function (event) {
 
         const logoutButton =
-            event.target.closest(
-                ".logout-btn"
-            );
-
+            event.target.closest(".logout-btn");
 
         if (!logoutButton) {
-
             return;
         }
 
-
         event.preventDefault();
-
         event.stopPropagation();
 
-
         logoutUser();
-
     }
 );
 
@@ -389,9 +287,7 @@ document.addEventListener(
 // ======================================================
 
 const loginForm =
-    document.getElementById(
-        "loginForm"
-    );
+    document.getElementById("loginForm");
 
 
 if (loginForm) {
@@ -403,50 +299,36 @@ if (loginForm) {
             event.preventDefault();
 
 
-            // ==========================================
+            // ==================================================
             // GET VALUES
-            // ==========================================
+            // ==================================================
 
             const name =
-                document.getElementById(
-                    "name"
-                )
-                .value
-                .trim();
-
+                document.getElementById("name")
+                    .value
+                    .trim();
 
             const loginId =
-                document.getElementById(
-                    "loginId"
-                )
-                .value
-                .trim();
-
+                document.getElementById("loginId")
+                    .value
+                    .trim();
 
             const password =
-                document.getElementById(
-                    "password"
-                )
-                .value
-                .trim();
-
+                document.getElementById("password")
+                    .value
+                    .trim();
 
             const role =
-                document.getElementById(
-                    "role"
-                )
-                .value;
-
+                document.getElementById("role")
+                    .value;
 
             const message =
-                document.getElementById(
-                    "message"
-                );
+                document.getElementById("message");
 
 
-            // ==========================================
+            // ==================================================
             // EMPTY VALIDATION
-            // ==========================================
+            // ==================================================
 
             if (
                 name === "" ||
@@ -458,22 +340,20 @@ if (loginForm) {
                 message.textContent =
                     "Please fill all the fields.";
 
-                message.style.color =
-                    "red";
+                message.style.color = "red";
 
                 return;
             }
 
 
-            // ==========================================
+            // ==================================================
             // CHECK BACKEND
-            // ==========================================
+            // ==================================================
 
             message.textContent =
                 "Checking login...";
 
-            message.style.color =
-                "blue";
+            message.style.color = "blue";
 
 
             try {
@@ -497,26 +377,22 @@ if (loginForm) {
                             body:
                                 JSON.stringify({
 
-                                    name:
-                                        name,
+                                    name: name,
 
-                                    loginId:
-                                        loginId,
+                                    loginId: loginId,
 
-                                    password:
-                                        password,
+                                    password: password,
 
-                                    role:
-                                        role
+                                    role: role
 
                                 })
                         }
                     );
 
 
-                // ======================================
+                // ==================================================
                 // SERVER RESPONSE
-                // ======================================
+                // ==================================================
 
                 const data =
                     await response.json();
@@ -528,9 +404,9 @@ if (loginForm) {
                 );
 
 
-                // ======================================
+                // ==================================================
                 // LOGIN FAILED
-                // ======================================
+                // ==================================================
 
                 if (
                     !response.ok ||
@@ -541,16 +417,15 @@ if (loginForm) {
                         data.message ||
                         "Login failed.";
 
-                    message.style.color =
-                        "red";
+                    message.style.color = "red";
 
                     return;
                 }
 
 
-                // ======================================
+                // ==================================================
                 // CHECK USER DATA
-                // ======================================
+                // ==================================================
 
                 if (
                     !data.user ||
@@ -562,50 +437,39 @@ if (loginForm) {
                     message.textContent =
                         "Invalid login response from server.";
 
-                    message.style.color =
-                        "red";
+                    message.style.color = "red";
 
                     return;
                 }
 
 
-                // ======================================
+                // ==================================================
                 // GET USER DATA
-                // ======================================
+                // ==================================================
 
                 const loggedUser =
-                    String(
-                        data.user.name
-                    );
-
+                    String(data.user.name);
 
                 const loggedRole =
-                    String(
-                        data.user.role
-                    );
-
+                    String(data.user.role);
 
                 const loggedLoginId =
-                    String(
-                        data.user.loginId
-                    );
+                    String(data.user.loginId);
 
 
-                // ======================================
+                // ==================================================
                 // SAVE LOCAL STORAGE
-                // ======================================
+                // ==================================================
 
                 localStorage.setItem(
                     "userName",
                     loggedUser
                 );
 
-
                 localStorage.setItem(
                     "userRole",
                     loggedRole
                 );
-
 
                 localStorage.setItem(
                     "loginId",
@@ -613,30 +477,28 @@ if (loginForm) {
                 );
 
 
-                // ======================================
+                // ==================================================
                 // CLEAR LOGOUT FLAG
-                // ======================================
+                // ==================================================
 
                 sessionStorage.removeItem(
                     "loggedOut"
                 );
 
 
-                // ======================================
+                // ==================================================
                 // SAVE SESSION STORAGE
-                // ======================================
+                // ==================================================
 
                 sessionStorage.setItem(
                     "userName",
                     loggedUser
                 );
 
-
                 sessionStorage.setItem(
                     "userRole",
                     loggedRole
                 );
-
 
                 sessionStorage.setItem(
                     "loginId",
@@ -644,17 +506,15 @@ if (loginForm) {
                 );
 
 
-                // ======================================
+                // ==================================================
                 // VERIFY STORAGE
-                // ======================================
+                // ==================================================
 
                 const savedUser =
                     getLoggedInUser();
 
-
                 const savedRole =
                     getLoggedInRole();
-
 
                 const savedLoginId =
                     getLoggedInId();
@@ -665,12 +525,10 @@ if (loginForm) {
                     savedUser
                 );
 
-
                 console.log(
                     "SAVED ROLE:",
                     savedRole
                 );
-
 
                 console.log(
                     "SAVED LOGIN ID:",
@@ -687,27 +545,25 @@ if (loginForm) {
                     message.textContent =
                         "Login session could not be saved. Please try again.";
 
-                    message.style.color =
-                        "red";
+                    message.style.color = "red";
 
                     return;
                 }
 
 
-                // ======================================
+                // ==================================================
                 // SUCCESS MESSAGE
-                // ======================================
+                // ==================================================
 
                 message.textContent =
                     "Login successful!";
 
-                message.style.color =
-                    "green";
+                message.style.color = "green";
 
 
-                // ======================================
+                // ==================================================
                 // ROLE BASED REDIRECT
-                // ======================================
+                // ==================================================
 
                 setTimeout(
                     function () {
@@ -723,9 +579,9 @@ if (loginForm) {
             }
 
 
-            // ==========================================
+            // ==================================================
             // BACKEND CONNECTION ERROR
-            // ==========================================
+            // ==================================================
 
             catch (error) {
 
@@ -734,12 +590,10 @@ if (loginForm) {
                     error
                 );
 
-
                 message.textContent =
                     "Cannot connect to server. Please try again.";
 
-                message.style.color =
-                    "red";
+                message.style.color = "red";
             }
 
         }
@@ -749,7 +603,6 @@ if (loginForm) {
 
 // ======================================================
 // MOBILE / BROWSER BACK BUTTON PROTECTION
-// FIXED
 // ======================================================
 
 window.addEventListener(
@@ -759,16 +612,13 @@ window.addEventListener(
         const user =
             getLoggedInUser();
 
-
         const role =
             getLoggedInRole();
-
 
         const loggedOut =
             sessionStorage.getItem(
                 "loggedOut"
             );
-
 
         const page =
             window.location.pathname
@@ -777,44 +627,22 @@ window.addEventListener(
 
 
         // ==================================================
-        // IF LOGGED OUT
+        // LOGGED OUT USER
         // ==================================================
 
-        if (
-            loggedOut === "true"
-        ) {
+        if (loggedOut === "true") {
 
-            // Remove any remaining login data
+            // Clear remaining login data
+            localStorage.removeItem("userName");
+            localStorage.removeItem("userRole");
+            localStorage.removeItem("loginId");
 
-            localStorage.removeItem(
-                "userName"
-            );
-
-            localStorage.removeItem(
-                "userRole"
-            );
-
-            localStorage.removeItem(
-                "loginId"
-            );
+            sessionStorage.removeItem("userName");
+            sessionStorage.removeItem("userRole");
+            sessionStorage.removeItem("loginId");
 
 
-            sessionStorage.removeItem(
-                "userName"
-            );
-
-            sessionStorage.removeItem(
-                "userRole"
-            );
-
-            sessionStorage.removeItem(
-                "loginId"
-            );
-
-
-            // If browser tries to show old dashboard
-            // send user back to login page.
-
+            // Browser tries to show old dashboard
             if (
                 protectedPages.includes(page)
             ) {
@@ -827,9 +655,7 @@ window.addEventListener(
             }
 
 
-            // If already on login page,
-            // stay here.
-
+            // Already on login page
             return;
         }
 
@@ -874,7 +700,6 @@ window.addEventListener(
 
 // ======================================================
 // BROWSER BACK BUTTON
-// FIXED
 // ======================================================
 
 window.addEventListener(
@@ -884,16 +709,13 @@ window.addEventListener(
         const user =
             getLoggedInUser();
 
-
         const role =
             getLoggedInRole();
-
 
         const loggedOut =
             sessionStorage.getItem(
                 "loggedOut"
             );
-
 
         const page =
             window.location.pathname
@@ -905,9 +727,7 @@ window.addEventListener(
         // LOGGED OUT USER
         // ==================================================
 
-        if (
-            loggedOut === "true"
-        ) {
+        if (loggedOut === "true") {
 
             if (
                 protectedPages.includes(page)
@@ -950,10 +770,7 @@ window.addEventListener(
             loggedOut !== "true"
         ) {
 
-            redirectToDashboard(
-                role
-            );
-
+            redirectToDashboard(role);
         }
 
     }
@@ -969,10 +786,8 @@ window.addEventListener(
     function () {
 
         if (!isLoginPage) {
-
             return;
         }
-
 
         const loggedOut =
             sessionStorage.getItem(
@@ -980,23 +795,15 @@ window.addEventListener(
             );
 
 
-        // If logout happened,
-        // keep user on login page.
-
-        if (
-            loggedOut === "true"
-        ) {
+        if (loggedOut === "true") {
 
             const loginForm =
                 document.getElementById(
                     "loginForm"
                 );
 
-
             if (loginForm) {
-
                 loginForm.reset();
-
             }
 
             return;
@@ -1013,7 +820,6 @@ window.addEventListener(
 const userName =
     getLoggedInUser();
 
-
 const userRole =
     getLoggedInRole();
 
@@ -1022,7 +828,6 @@ const userNameElement =
     document.getElementById(
         "userName"
     );
-
 
 const userRoleElement =
     document.getElementById(
@@ -1059,30 +864,25 @@ const profileNameElement =
         "profileName"
     );
 
-
 const profileFullNameElement =
     document.getElementById(
         "profileFullName"
     );
-
 
 const profileLoginIdElement =
     document.getElementById(
         "profileLoginId"
     );
 
-
 const profileRoleElement =
     document.getElementById(
         "profileRole"
     );
 
-
 const profileRoleInfoElement =
     document.getElementById(
         "profileRoleInfo"
     );
-
 
 const profileInitialElement =
     document.getElementById(
@@ -1093,10 +893,8 @@ const profileInitialElement =
 const savedName =
     getLoggedInUser();
 
-
 const savedRole =
     getLoggedInRole();
-
 
 const savedLoginId =
     getLoggedInId();
@@ -1177,7 +975,6 @@ const calendar =
 if (calendar) {
 
     let navigationYear = 2026;
-
     let navigationMonth = 7;
 
 
@@ -1186,60 +983,50 @@ if (calendar) {
             "currentMonth"
         );
 
-
     const prevMonthButton =
         document.getElementById(
             "prevMonth"
         );
-
 
     const nextMonthButton =
         document.getElementById(
             "nextMonth"
         );
 
-
     const todayShiftElement =
         document.getElementById(
             "todayShift"
         );
-
 
     const currentRotationElement =
         document.getElementById(
             "currentRotation"
         );
 
-
     const workingDaysElement =
         document.getElementById(
             "workingDays"
         );
-
 
     const weekOffElement =
         document.getElementById(
             "weekOff"
         );
 
-
     const nextShiftElement =
         document.getElementById(
             "nextShift"
         );
-
 
     const nextShiftDateElement =
         document.getElementById(
             "nextShiftDate"
         );
 
-
     const nextShiftTimeElement =
         document.getElementById(
             "nextShiftTime"
         );
-
 
     const upcomingSchedule =
         document.getElementById(
@@ -1248,7 +1035,6 @@ if (calendar) {
 
 
     const monthNames = [
-
         "January",
         "February",
         "March",
@@ -1261,7 +1047,6 @@ if (calendar) {
         "October",
         "November",
         "December"
-
     ];
 
 
@@ -1281,7 +1066,6 @@ if (calendar) {
                 7,
                 1
             );
-
 
         const currentDate =
             new Date(
@@ -1313,98 +1097,78 @@ if (calendar) {
             ) % 14;
 
 
-        if (
-            cycleDay < 5
-        ) {
+        // 5 DAYS DAY SHIFT
+        if (cycleDay < 5) {
 
             return {
 
-                shift:
-                    "Day Shift",
+                shift: "Day Shift",
 
-                shortName:
-                    "DAY",
+                shortName: "DAY",
 
                 timing:
                     "9:00 AM - 6:00 PM",
 
-                status:
-                    "Working",
+                status: "Working",
 
                 className:
                     "day-shift"
-
             };
         }
 
 
-        if (
-            cycleDay < 7
-        ) {
+        // 2 DAYS OFF
+        if (cycleDay < 7) {
 
             return {
 
-                shift:
-                    "Week Off",
+                shift: "Week Off",
 
-                shortName:
-                    "WEEK OFF",
+                shortName: "WEEK OFF",
 
-                timing:
-                    "-",
+                timing: "-",
 
-                status:
-                    "Off",
+                status: "Off",
 
                 className:
                     "week-off"
-
             };
         }
 
 
-        if (
-            cycleDay < 12
-        ) {
+        // 5 DAYS NIGHT SHIFT
+        if (cycleDay < 12) {
 
             return {
 
-                shift:
-                    "Night Shift",
+                shift: "Night Shift",
 
-                shortName:
-                    "NIGHT",
+                shortName: "NIGHT",
 
                 timing:
                     "9:00 PM - 6:00 AM",
 
-                status:
-                    "Working",
+                status: "Working",
 
                 className:
                     "night-shift"
-
             };
         }
 
 
+        // 2 DAYS OFF
         return {
 
-            shift:
-                "Week Off",
+            shift: "Week Off",
 
-            shortName:
-                "WEEK OFF",
+            shortName: "WEEK OFF",
 
-            timing:
-                "-",
+            timing: "-",
 
-            status:
-                "Off",
+            status: "Off",
 
             className:
                 "week-off"
-
         };
     }
 
@@ -1418,13 +1182,10 @@ if (calendar) {
         month
     ) {
 
-        calendar.innerHTML =
-            "";
+        calendar.innerHTML = "";
 
 
-        if (
-            currentMonthElement
-        ) {
+        if (currentMonthElement) {
 
             currentMonthElement.textContent =
                 monthNames[month] +
@@ -1434,7 +1195,6 @@ if (calendar) {
 
 
         const dayNames = [
-
             "Sun",
             "Mon",
             "Tue",
@@ -1442,7 +1202,6 @@ if (calendar) {
             "Thu",
             "Fri",
             "Sat"
-
         ];
 
 
@@ -1454,20 +1213,16 @@ if (calendar) {
                         "div"
                     );
 
-
                 dayName.classList.add(
                     "day-name"
                 );
 
-
                 dayName.textContent =
                     day;
-
 
                 calendar.appendChild(
                     dayName
                 );
-
             }
         );
 
@@ -1488,6 +1243,7 @@ if (calendar) {
             ).getDate();
 
 
+        // Empty boxes
         for (
             let i = 0;
             i < firstDay;
@@ -1499,11 +1255,9 @@ if (calendar) {
                     "div"
                 );
 
-
             emptyBox.classList.add(
                 "empty"
             );
-
 
             calendar.appendChild(
                 emptyBox
@@ -1511,6 +1265,7 @@ if (calendar) {
         }
 
 
+        // Dates
         for (
             let date = 1;
             date <= totalDays;
@@ -1522,7 +1277,6 @@ if (calendar) {
                     "div"
                 );
 
-
             dateBox.classList.add(
                 "date"
             );
@@ -1533,10 +1287,8 @@ if (calendar) {
                     "span"
                 );
 
-
             dateNumber.textContent =
                 date;
-
 
             dateBox.appendChild(
                 dateNumber
@@ -1566,17 +1318,15 @@ if (calendar) {
             );
 
 
+            // TODAY
             const today =
                 new Date();
 
 
             if (
-                year ===
-                    today.getFullYear() &&
-                month ===
-                    today.getMonth() &&
-                date ===
-                    today.getDate()
+                year === today.getFullYear() &&
+                month === today.getMonth() &&
+                date === today.getDate()
             ) {
 
                 dateBox.classList.add(
@@ -1615,36 +1365,28 @@ if (calendar) {
             );
 
 
-        if (
-            todayShiftElement
-        ) {
+        if (todayShiftElement) {
 
             todayShiftElement.textContent =
                 todayInfo.shift;
         }
 
 
-        if (
-            currentRotationElement
-        ) {
+        if (currentRotationElement) {
 
             currentRotationElement.textContent =
                 todayInfo.shift;
         }
 
 
-        if (
-            workingDaysElement
-        ) {
+        if (workingDaysElement) {
 
             workingDaysElement.textContent =
                 "5 Days";
         }
 
 
-        if (
-            weekOffElement
-        ) {
+        if (weekOffElement) {
 
             weekOffElement.textContent =
                 "2 Days";
@@ -1704,17 +1446,10 @@ if (calendar) {
                     nextDate.toLocaleDateString(
                         "en-US",
                         {
-                            weekday:
-                                "long",
-
-                            month:
-                                "long",
-
-                            day:
-                                "numeric",
-
-                            year:
-                                "numeric"
+                            weekday: "long",
+                            month: "long",
+                            day: "numeric",
+                            year: "numeric"
                         }
                     );
 
@@ -1740,16 +1475,12 @@ if (calendar) {
 
     function updateUpcomingSchedule() {
 
-        if (
-            !upcomingSchedule
-        ) {
-
+        if (!upcomingSchedule) {
             return;
         }
 
 
-        upcomingSchedule.innerHTML =
-            "";
+        upcomingSchedule.innerHTML = "";
 
 
         const today =
@@ -1784,7 +1515,6 @@ if (calendar) {
                     "div"
                 );
 
-
             scheduleCard.classList.add(
                 "schedule-item"
             );
@@ -1795,24 +1525,17 @@ if (calendar) {
                     "div"
                 );
 
-
             dateElement.classList.add(
                 "schedule-date"
             );
-
 
             dateElement.textContent =
                 scheduleDate.toLocaleDateString(
                     "en-US",
                     {
-                        weekday:
-                            "short",
-
-                        month:
-                            "short",
-
-                        day:
-                            "numeric"
+                        weekday: "short",
+                        month: "short",
+                        day: "numeric"
                     }
                 );
 
@@ -1822,11 +1545,9 @@ if (calendar) {
                     "div"
                 );
 
-
             shiftElement.classList.add(
                 "schedule-shift"
             );
-
 
             shiftElement.textContent =
                 shiftInfo.shift;
@@ -1837,11 +1558,9 @@ if (calendar) {
                     "div"
                 );
 
-
             timingElement.classList.add(
                 "schedule-time"
             );
-
 
             timingElement.textContent =
                 shiftInfo.timing;
@@ -1852,11 +1571,9 @@ if (calendar) {
                     "div"
                 );
 
-
             statusElement.classList.add(
                 "schedule-status"
             );
-
 
             statusElement.textContent =
                 shiftInfo.status;
@@ -1866,16 +1583,13 @@ if (calendar) {
                 dateElement
             );
 
-
             scheduleCard.appendChild(
                 shiftElement
             );
 
-
             scheduleCard.appendChild(
                 timingElement
             );
-
 
             scheduleCard.appendChild(
                 statusElement
@@ -1893,9 +1607,7 @@ if (calendar) {
     // PREVIOUS MONTH
     // ==================================================
 
-    if (
-        prevMonthButton
-    ) {
+    if (prevMonthButton) {
 
         prevMonthButton.addEventListener(
             "click",
@@ -1904,12 +1616,9 @@ if (calendar) {
                 navigationMonth--;
 
 
-                if (
-                    navigationMonth < 0
-                ) {
+                if (navigationMonth < 0) {
 
                     navigationMonth = 11;
-
                     navigationYear--;
                 }
 
@@ -1918,7 +1627,6 @@ if (calendar) {
                     navigationYear,
                     navigationMonth
                 );
-
             }
         );
     }
@@ -1928,9 +1636,7 @@ if (calendar) {
     // NEXT MONTH
     // ==================================================
 
-    if (
-        nextMonthButton
-    ) {
+    if (nextMonthButton) {
 
         nextMonthButton.addEventListener(
             "click",
@@ -1939,12 +1645,9 @@ if (calendar) {
                 navigationMonth++;
 
 
-                if (
-                    navigationMonth > 11
-                ) {
+                if (navigationMonth > 11) {
 
                     navigationMonth = 0;
-
                     navigationYear++;
                 }
 
@@ -1953,7 +1656,6 @@ if (calendar) {
                     navigationYear,
                     navigationMonth
                 );
-
             }
         );
     }
@@ -1968,11 +1670,8 @@ if (calendar) {
         navigationMonth
     );
 
-
     updateTodayShift();
-
     updateNextShift();
-
     updateUpcomingSchedule();
 }
 
@@ -1987,9 +1686,7 @@ const changePasswordForm =
     );
 
 
-if (
-    changePasswordForm
-) {
+if (changePasswordForm) {
 
     changePasswordForm.addEventListener(
         "submit",
@@ -1997,6 +1694,10 @@ if (
 
             event.preventDefault();
 
+
+            // ==================================================
+            // GET PASSWORD VALUES
+            // ==================================================
 
             const currentPassword =
                 document.getElementById(
@@ -2036,9 +1737,7 @@ if (
             // CHECK LOGIN ID
             // ==================================================
 
-            if (
-                !loginId
-            ) {
+            if (!loginId) {
 
                 passwordMessage.textContent =
                     "User login information not found.";
@@ -2120,6 +1819,11 @@ if (
 
             try {
 
+                console.log(
+                    "CHANGE PASSWORD REQUEST STARTED"
+                );
+
+
                 const response =
                     await fetch(
                         "https://ai-roster-backend.onrender.com/change-password",
@@ -2151,8 +1855,18 @@ if (
                     );
 
 
+                // ==================================================
+                // SERVER RESPONSE
+                // ==================================================
+
                 const data =
                     await response.json();
+
+
+                console.log(
+                    "CHANGE PASSWORD RESPONSE:",
+                    data
+                );
 
 
                 // ==================================================
@@ -2186,6 +1900,7 @@ if (
                     "green";
 
 
+                // Clear fields
                 document.getElementById(
                     "currentPassword"
                 ).value = "";
