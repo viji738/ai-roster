@@ -1,9 +1,8 @@
-```javascript
 // ======================================================
 // AI AUTOMATIC ROSTER SYSTEM
 // BACKEND LOGIN + LOGOUT + ROLE PROTECTION
 // PROFILE + CALENDAR + CHANGE PASSWORD
-// MOBILE BACK BUTTON PROTECTION
+// MOBILE LOGIN FIX
 // ======================================================
 
 
@@ -16,14 +15,16 @@ const currentPage =
 
 
 // ======================================================
-// LOGIN STATUS
+// LOGIN STATUS FUNCTIONS
 // ======================================================
 
-const loggedInUser =
-    localStorage.getItem("userName");
+function getLoggedInUser() {
+    return localStorage.getItem("userName");
+}
 
-const loggedInRole =
-    localStorage.getItem("userRole");
+function getLoggedInRole() {
+    return localStorage.getItem("userRole");
+}
 
 
 // ======================================================
@@ -55,49 +56,66 @@ const managerPages = [
 
 
 // ======================================================
-// LOGIN PROTECTION
+// PAGE PROTECTION
 // ======================================================
 
-if (
-    !isLoginPage &&
-    (!loggedInUser || !loggedInRole)
-) {
+function checkPageAccess() {
 
-    window.location.replace("index.html");
-}
+    const user =
+        getLoggedInUser();
+
+    const role =
+        getLoggedInRole();
 
 
-// ======================================================
-// ROLE PROTECTION
-// ======================================================
+    // Login page
+    if (isLoginPage) {
+        return;
+    }
 
-if (
-    loggedInUser &&
-    loggedInRole &&
-    !isLoginPage
-) {
 
-    // Associate pages
+    // Protected page without login
+    if (!user || !role) {
 
+        window.location.replace(
+            "index.html"
+        );
+
+        return;
+    }
+
+
+    // Associate page protection
     if (
         associatePages.includes(currentPage) &&
-        loggedInRole !== "Associate"
+        role !== "Associate"
     ) {
 
-        window.location.replace("index.html");
+        window.location.replace(
+            "index.html"
+        );
+
+        return;
     }
 
 
-    // Manager pages
-
+    // Manager page protection
     if (
         managerPages.includes(currentPage) &&
-        loggedInRole !== "Manager"
+        role !== "Manager"
     ) {
 
-        window.location.replace("index.html");
+        window.location.replace(
+            "index.html"
+        );
+
+        return;
     }
 }
+
+
+// Run page protection
+checkPageAccess();
 
 
 // ======================================================
@@ -107,14 +125,12 @@ if (
 function logoutUser() {
 
     // Clear login session
-
     localStorage.removeItem("userName");
     localStorage.removeItem("userRole");
     localStorage.removeItem("loginId");
 
 
-    // Clear login form fields
-
+    // Clear login fields
     const nameInput =
         document.getElementById("name");
 
@@ -129,32 +145,26 @@ function logoutUser() {
 
 
     if (nameInput) {
-
         nameInput.value = "";
     }
 
-
     if (loginIdInput) {
-
         loginIdInput.value = "";
     }
 
-
     if (passwordInput) {
-
         passwordInput.value = "";
     }
 
-
     if (roleInput) {
-
         roleInput.value = "";
     }
 
 
     // Go to login page
-
-    window.location.replace("index.html");
+    window.location.replace(
+        "index.html"
+    );
 }
 
 
@@ -305,6 +315,12 @@ if (loginForm) {
                     await response.json();
 
 
+                console.log(
+                    "LOGIN RESPONSE:",
+                    data
+                );
+
+
                 // ======================================
                 // LOGIN FAILED
                 // ======================================
@@ -317,6 +333,27 @@ if (loginForm) {
                     message.textContent =
                         data.message ||
                         "Login failed.";
+
+                    message.style.color =
+                        "red";
+
+                    return;
+                }
+
+
+                // ======================================
+                // CHECK USER DATA
+                // ======================================
+
+                if (
+                    !data.user ||
+                    !data.user.name ||
+                    !data.user.role ||
+                    !data.user.loginId
+                ) {
+
+                    message.textContent =
+                        "Invalid login response from server.";
 
                     message.style.color =
                         "red";
@@ -347,6 +384,48 @@ if (loginForm) {
                 );
 
 
+                // ======================================
+                // VERIFY LOCAL STORAGE
+                // ======================================
+
+                const savedUser =
+                    localStorage.getItem(
+                        "userName"
+                    );
+
+
+                const savedRole =
+                    localStorage.getItem(
+                        "userRole"
+                    );
+
+
+                const savedLoginId =
+                    localStorage.getItem(
+                        "loginId"
+                    );
+
+
+                if (
+                    !savedUser ||
+                    !savedRole ||
+                    !savedLoginId
+                ) {
+
+                    message.textContent =
+                        "Login session could not be saved. Please try again.";
+
+                    message.style.color =
+                        "red";
+
+                    return;
+                }
+
+
+                // ======================================
+                // LOGIN SUCCESS MESSAGE
+                // ======================================
+
                 message.textContent =
                     "Login successful!";
 
@@ -362,28 +441,36 @@ if (loginForm) {
                     function () {
 
                         if (
-                            data.user.role ===
+                            savedRole ===
                             "Associate"
                         ) {
 
-                            window.location.replace(
-                                "dashboard.html"
-                            );
+                            window.location.href =
+                                "dashboard.html";
 
                         }
 
                         else if (
-                            data.user.role ===
+                            savedRole ===
                             "Manager"
                         ) {
 
-                            window.location.replace(
-                                "manager-dashboard.html"
-                            );
+                            window.location.href =
+                                "manager-dashboard.html";
+
+                        }
+
+                        else {
+
+                            message.textContent =
+                                "Invalid user role.";
+
+                            message.style.color =
+                                "red";
                         }
 
                     },
-                    500
+                    300
                 );
 
             }
@@ -726,9 +813,7 @@ if (calendar) {
             ) % 14;
 
 
-        // ==================================================
         // DAY SHIFT
-        // ==================================================
 
         if (
             cycleDay < 5
@@ -754,9 +839,7 @@ if (calendar) {
         }
 
 
-        // ==================================================
         // FIRST WEEK OFF
-        // ==================================================
 
         if (
             cycleDay < 7
@@ -782,9 +865,7 @@ if (calendar) {
         }
 
 
-        // ==================================================
         // NIGHT SHIFT
-        // ==================================================
 
         if (
             cycleDay < 12
@@ -810,9 +891,7 @@ if (calendar) {
         }
 
 
-        // ==================================================
         // SECOND WEEK OFF
-        // ==================================================
 
         return {
 
@@ -1438,9 +1517,7 @@ if (changePasswordForm) {
                 );
 
 
-            // ==========================================
             // CHECK LOGIN ID
-            // ==========================================
 
             if (!loginId) {
 
@@ -1454,9 +1531,7 @@ if (changePasswordForm) {
             }
 
 
-            // ==========================================
             // CHECK EMPTY FIELDS
-            // ==========================================
 
             if (
                 !currentPassword ||
@@ -1474,9 +1549,7 @@ if (changePasswordForm) {
             }
 
 
-            // ==========================================
             // PASSWORD LENGTH
-            // ==========================================
 
             if (
                 newPassword.length < 8
@@ -1492,9 +1565,7 @@ if (changePasswordForm) {
             }
 
 
-            // ==========================================
             // PASSWORD MATCH
-            // ==========================================
 
             if (
                 newPassword !==
@@ -1511,9 +1582,7 @@ if (changePasswordForm) {
             }
 
 
-            // ==========================================
             // CONNECT TO BACKEND
-            // ==========================================
 
             passwordMessage.textContent =
                 "Changing password...";
@@ -1559,9 +1628,7 @@ if (changePasswordForm) {
                     await response.json();
 
 
-                // ======================================
                 // PASSWORD CHANGE FAILED
-                // ======================================
 
                 if (
                     !response.ok ||
@@ -1579,9 +1646,7 @@ if (changePasswordForm) {
                 }
 
 
-                // ======================================
                 // PASSWORD CHANGE SUCCESS
-                // ======================================
 
                 passwordMessage.textContent =
                     "Password changed successfully!";
@@ -1589,8 +1654,6 @@ if (changePasswordForm) {
                 passwordMessage.style.color =
                     "green";
 
-
-                // Clear password fields
 
                 document.getElementById(
                     "currentPassword"
@@ -1606,12 +1669,11 @@ if (changePasswordForm) {
                     "confirmPassword"
                 ).value = "";
 
+
             }
 
 
-            // ==========================================
             // CONNECTION ERROR
-            // ==========================================
 
             catch (error) {
 
@@ -1631,68 +1693,3 @@ if (changePasswordForm) {
         }
     );
 }
-
-
-// ======================================================
-// MOBILE / BROWSER BACK BUTTON PROTECTION
-// ======================================================
-
-window.addEventListener(
-    "pageshow",
-    function () {
-
-        const currentPage =
-            window.location.pathname
-                .split("/")
-                .pop();
-
-
-        const protectedPages = [
-
-            "dashboard.html",
-            "my-schedule.html",
-            "profile.html",
-
-            "manager-dashboard.html",
-            "employees.html",
-            "employee-details.html",
-            "schedule2.html",
-            "manager-profile.html"
-
-        ];
-
-
-        const currentUser =
-            localStorage.getItem(
-                "userName"
-            );
-
-
-        const currentRole =
-            localStorage.getItem(
-                "userRole"
-            );
-
-
-        // ==============================================
-        // IF LOGGED OUT AND CACHED PAGE IS OPENED
-        // ==============================================
-
-        if (
-            protectedPages.includes(
-                currentPage
-            ) &&
-            (
-                !currentUser ||
-                !currentRole
-            )
-        ) {
-
-            window.location.replace(
-                "index.html"
-            );
-        }
-
-    }
-);
-```
