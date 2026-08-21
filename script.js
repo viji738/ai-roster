@@ -139,11 +139,8 @@ function checkPageAccess() {
 
     if (isLoginPage) {
 
-        // ----------------------------------------------
-        // IMPORTANT:
-        // If logout just happened, NEVER redirect back
-        // to dashboard.
-        // ----------------------------------------------
+        // If logout just happened,
+        // stay on login page.
 
         if (loggedOut === "true") {
 
@@ -151,9 +148,7 @@ function checkPageAccess() {
         }
 
 
-        // ----------------------------------------------
         // Already logged in
-        // ----------------------------------------------
 
         if (
             user &&
@@ -235,79 +230,17 @@ function checkPageAccess() {
 checkPageAccess();
 
 
+// ======================================================
+// LOGOUT
+// FIXED
+// ======================================================
+
 function logoutUser() {
 
     // ==========================================
-    // CLEAR ALL LOGIN DATA
+    // IMPORTANT:
+    // SET LOGGED OUT FLAG FIRST
     // ==========================================
-
-    localStorage.clear();
-    sessionStorage.clear();
-
-
-    // ==========================================
-    // REMOVE BROWSER HISTORY ENTRY
-    // ==========================================
-
-    window.history.pushState(
-        null,
-        "",
-        "index.html"
-    );
-
-
-    // ==========================================
-    // GO DIRECTLY TO LOGIN PAGE
-    // ==========================================
-
-    window.location.href =
-        window.location.origin +
-        window.location.pathname
-            .replace(
-                /[^/]*$/,
-                ""
-            ) +
-        "index.html";
-
-
-
-    // ==================================================
-    // CLEAR LOCAL STORAGE
-    // ==================================================
-
-    localStorage.removeItem(
-        "userName"
-    );
-
-    localStorage.removeItem(
-        "userRole"
-    );
-
-    localStorage.removeItem(
-        "loginId"
-    );
-
-
-    // ==================================================
-    // CLEAR SESSION STORAGE
-    // ==================================================
-
-    sessionStorage.removeItem(
-        "userName"
-    );
-
-    sessionStorage.removeItem(
-        "userRole"
-    );
-
-    sessionStorage.removeItem(
-        "loginId"
-    );
-
-
-    // ==================================================
-    // SET LOGGED OUT FLAG
-    // ==================================================
 
     sessionStorage.setItem(
         "loggedOut",
@@ -315,9 +248,39 @@ function logoutUser() {
     );
 
 
-    // ==================================================
+    // ==========================================
+    // CLEAR LOGIN DATA
+    // ==========================================
+
+    localStorage.removeItem(
+        "userName"
+    );
+
+    localStorage.removeItem(
+        "userRole"
+    );
+
+    localStorage.removeItem(
+        "loginId"
+    );
+
+
+    sessionStorage.removeItem(
+        "userName"
+    );
+
+    sessionStorage.removeItem(
+        "userRole"
+    );
+
+    sessionStorage.removeItem(
+        "loginId"
+    );
+
+
+    // ==========================================
     // CLEAR LOGIN FORM
-    // ==================================================
+    // ==========================================
 
     const nameInput =
         document.getElementById(
@@ -367,9 +330,9 @@ function logoutUser() {
     }
 
 
-    // ==================================================
-    // REMOVE CURRENT PAGE FROM HISTORY
-    // ==================================================
+    // ==========================================
+    // REMOVE CURRENT PAGE FROM CURRENT HISTORY
+    // ==========================================
 
     window.history.replaceState(
         null,
@@ -378,9 +341,9 @@ function logoutUser() {
     );
 
 
-    // ==================================================
-    // FORCE LOGIN PAGE
-    // ==================================================
+    // ==========================================
+    // GO TO LOGIN PAGE
+    // ==========================================
 
     window.location.replace(
         "index.html"
@@ -392,9 +355,7 @@ function logoutUser() {
 // LOGOUT BUTTON
 // ======================================================
 
-// Use delegated click.
-// This works better on mobile and also works if the
-// logout button is created later.
+// Delegated click works on mobile also.
 
 document.addEventListener(
     "click",
@@ -788,6 +749,7 @@ if (loginForm) {
 
 // ======================================================
 // MOBILE / BROWSER BACK BUTTON PROTECTION
+// FIXED
 // ======================================================
 
 window.addEventListener(
@@ -815,15 +777,14 @@ window.addEventListener(
 
 
         // ==================================================
-        // LOGOUT PAGE
+        // IF LOGGED OUT
         // ==================================================
 
         if (
-            isLoginPage &&
             loggedOut === "true"
         ) {
 
-            // Make sure old login values are gone
+            // Remove any remaining login data
 
             localStorage.removeItem(
                 "userName"
@@ -850,6 +811,24 @@ window.addEventListener(
                 "loginId"
             );
 
+
+            // If browser tries to show old dashboard
+            // send user back to login page.
+
+            if (
+                protectedPages.includes(page)
+            ) {
+
+                window.location.replace(
+                    "index.html"
+                );
+
+                return;
+            }
+
+
+            // If already on login page,
+            // stay here.
 
             return;
         }
@@ -864,13 +843,6 @@ window.addEventListener(
             (!user || !role)
         ) {
 
-            window.history.replaceState(
-                null,
-                "",
-                "index.html"
-            );
-
-
             window.location.replace(
                 "index.html"
             );
@@ -880,7 +852,7 @@ window.addEventListener(
 
 
         // ==================================================
-        // BROWSER CACHE / BF CACHE
+        // BF CACHE / MOBILE CACHE
         // ==================================================
 
         if (
@@ -902,6 +874,7 @@ window.addEventListener(
 
 // ======================================================
 // BROWSER BACK BUTTON
+// FIXED
 // ======================================================
 
 window.addEventListener(
@@ -916,10 +889,37 @@ window.addEventListener(
             getLoggedInRole();
 
 
+        const loggedOut =
+            sessionStorage.getItem(
+                "loggedOut"
+            );
+
+
         const page =
             window.location.pathname
                 .split("/")
                 .pop();
+
+
+        // ==================================================
+        // LOGGED OUT USER
+        // ==================================================
+
+        if (
+            loggedOut === "true"
+        ) {
+
+            if (
+                protectedPages.includes(page)
+            ) {
+
+                window.location.replace(
+                    "index.html"
+                );
+
+                return;
+            }
+        }
 
 
         // ==================================================
@@ -940,13 +940,14 @@ window.addEventListener(
 
 
         // ==================================================
-        // LOGIN PAGE + VALID SESSION
+        // LOGIN PAGE WITH VALID SESSION
         // ==================================================
 
         if (
             isLoginPage &&
             user &&
-            role
+            role &&
+            loggedOut !== "true"
         ) {
 
             redirectToDashboard(
