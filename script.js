@@ -67,6 +67,118 @@ if (
 }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ======================================================
+// MOBILE BACK BUTTON / BFCACHE PROTECTION
+// ======================================================
+
+window.addEventListener("pageshow", function (event) {
+
+    const currentPage =
+        window.location.pathname.split("/").pop();
+
+    const loggedInUser =
+        localStorage.getItem("userName");
+
+    const loggedInRole =
+        localStorage.getItem("userRole");
+
+
+    // ------------------------------------------
+    // IF USER IS NOT LOGGED IN
+    // ------------------------------------------
+
+    if (
+        !loggedInUser ||
+        !loggedInRole
+    ) {
+
+        const protectedPages = [
+            "dashboard.html",
+            "my-schedule.html",
+            "profile.html",
+            "manager-dashboard.html",
+            "employees.html",
+            "employee-details.html",
+            "schedule2.html",
+            "manager-profile.html"
+        ];
+
+
+        // If old dashboard is restored from browser cache
+        if (
+            protectedPages.includes(currentPage)
+        ) {
+
+            window.location.replace(
+                "index.html"
+            );
+
+        }
+
+    }
+
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // ======================================================
 // ROLE PROTECTION
 // ======================================================
